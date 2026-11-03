@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>连锁餐饮 AI 落地台</title>
+<style>
+:root{
+  --bg:#f6f3ee;--panel:#fff;--ink:#1f1a17;--ink2:#635a52;--ink3:#958b81;--line:#e7e0d6;
+  --nav:#2a1d17;--nav2:#3d2b22;--navink:#d6c9bd;
+  --acc:#b8321f;--accbg:#fbebe7;--acc2:#8f2414;
+  --coze:#3355ff;--cozebg:#e9edff;--wb:#0a8f7a;--wbbg:#e2f5f1;
+  --bad:#c0392b;--badbg:#fdecea;--warn:#b45309;--warnbg:#fff3df;--ok:#1f7a4d;--okbg:#e6f4ec;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:236px;flex-shrink:0;background:var(--nav);color:var(--navink);padding:20px 12px 30px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{color:#fff;font-weight:700;font-size:17px;padding:0 10px;line-height:1.4}
+.brand small{display:block;font-weight:400;font-size:12px;color:#a6978a;margin-top:4px}
+.group{margin:18px 10px 4px;font-size:11.5px;color:#9a8b7e;letter-spacing:1px}
+nav button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;color:var(--navink);padding:8px 10px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+nav button:hover{background:var(--nav2);color:#fff}
+nav button.on{background:var(--acc);color:#fff}
+nav button .k{font-size:11px;color:#9a8b7e;white-space:nowrap}
+nav button.on .k{color:#ffd9d2}
+main{flex:1;min-width:0;padding:28px 36px 90px;max-width:1120px}
+h1{font-size:24px;margin:0 0 6px}
+h2{font-size:18px;margin:26px 0 10px}
+.sub{color:var(--ink2);margin:0 0 18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.card h3{margin:0 0 10px;font-size:16px}
+.hero{background:var(--nav);color:#efe6dd;border-radius:14px;padding:26px 28px;margin-bottom:18px}
+.hero h1{color:#fff;font-size:26px}
+.hero p{color:#d6c9bd;margin:6px 0 0;max-width:780px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:.15s}
+.tile:hover{border-color:var(--acc);transform:translateY(-1px)}
+.tile b{display:block;font-size:15px}
+.tile p{margin:4px 0 8px;font-size:13px;color:var(--ink2)}
+.badge{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;font-weight:600;margin-right:4px}
+.b-coze{background:var(--cozebg);color:var(--coze)}
+.b-wb{background:var(--wbbg);color:var(--wb)}
+.b-dept{background:#f1ece5;color:var(--ink2);font-weight:500}
+.steps{display:flex;gap:8px;flex-wrap:wrap;counter-reset:s}
+.steps div{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--ink2)}
+.steps div b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.steps div b:before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--acc);color:#fff;font-size:12px;margin-right:6px}
+label.l{display:block;font-weight:600;font-size:13px;margin:12px 0 6px;color:var(--ink2)}
+textarea,input,select{width:100%;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+textarea{min-height:150px;resize:vertical;font-size:14px}
+textarea:focus,input:focus,select:focus{outline:2px solid #f0b8ad;border-color:var(--acc)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{border:0;border-radius:8px;padding:9px 18px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;background:var(--acc);color:#fff}
+.btn:hover{background:var(--acc2)}.btn:disabled{opacity:.55;cursor:wait}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--acc)}
+.btn.sm{padding:5px 12px;font-size:13px}
+.note{font-size:13px;color:var(--ink2)}
+.disc{font-size:12px;color:var(--ink3);margin:8px 0 0}
+.err{background:var(--badbg);border:1px solid #f3c2bc;color:#8a2a1a;padding:10px 14px;border-radius:8px;font-size:14px;white-space:pre-wrap;margin-bottom:14px}
+.loading{color:var(--ink2);font-size:14px;display:flex;align-items:center;gap:10px}
+.spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.pill{display:inline-block;font-size:12px;padding:1px 9px;border-radius:999px;background:#f1ece5;color:var(--ink2);margin:2px 4px 2px 0;white-space:nowrap}
+.p-bad{background:var(--badbg);color:var(--bad)}.p-warn{background:var(--warnbg);color:var(--warn)}.p-ok{background:var(--okbg);color:var(--ok)}
+.out{white-space:pre-wrap;background:#fbf9f6;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:14px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{color:var(--ink2);font-weight:600;font-size:13px;background:#faf7f2;white-space:nowrap}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--ok)}.dn{color:var(--bad)}
+.item{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;background:#fff}
+.item h4{margin:0 0 6px;font-size:15px}
+.item .q{font-size:13px;color:var(--ink2);background:#faf7f2;border-radius:6px;padding:6px 10px;margin-bottom:8px}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--ink2)}.kv dd{margin:0}
+/* 搭建图 */
+.flow{display:flex;align-items:stretch;flex-wrap:wrap;row-gap:10px;padding:4px 0 8px}
+.node{width:150px;flex:0 0 150px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--ink2)}
+.node b{display:block;color:var(--ink);font-size:13.5px;margin:2px 0}
+.node .t{font-size:11px;font-weight:600;padding:0 6px;border-radius:4px;background:#f1ece5;color:var(--ink2)}
+.node.llm .t{background:var(--cozebg);color:var(--coze)}
+.node.code .t{background:#efe7fb;color:#6b3fb8}
+.node.kb .t{background:var(--wbbg);color:var(--wb)}
+.node.cond .t{background:var(--warnbg);color:var(--warn)}
+.node.out .t{background:var(--accbg);color:var(--acc)}
+.arr{display:grid;place-items:center;width:26px;flex-shrink:0;color:var(--ink3);font-size:18px}
+.teach{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px}
+.teach div{background:#faf7f2;border-radius:8px;padding:10px 12px;font-size:13px}
+.teach b{display:block;font-size:12px;color:var(--ink2);font-weight:600}
+.tabs{display:flex;gap:6px;margin:4px 0 14px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 16px;font:inherit;font-size:13.5px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+section{display:none}section.on{display:block}
+.fb{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--ink2)}
+.fb button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:2px 10px;cursor:pointer;font:inherit;font-size:13px}
+.fb button.on{background:var(--okbg);border-color:#bfe3cc;color:var(--ok)}
+.mode{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:14px;flex-wrap:wrap}
+.mode .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.mode .dot.live{background:var(--coze)}
+ul.tight{margin:6px 0;padding-left:20px}ul.tight li{margin:3px 0}
+@media(max-width:820px){
+  .app{flex-direction:column}
+  nav{width:100%;height:auto;position:static;padding:14px 12px}
+  nav .navlist{display:flex;flex-wrap:wrap;gap:4px}
+  nav button{width:auto;padding:6px 10px}
+  nav button .k,.group{display:none}
+  main{padding:18px 16px 70px}
+  .hero{padding:20px}
+  .kv{grid-template-columns:80px 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<nav>
+  <div class="brand">连锁餐饮 AI 落地台<small>扣子 Coze × 腾讯 WorkBuddy · 演示原型</small></div>
+  <div class="navlist">
+  <div class="group">总览</div>
+  <button data-go="home">落地方法与全景</button>
+  <div class="group">运营 · 客户</div>
+  <button data-go="t1">客诉分级与回复 <span class="k">客服 · 品控</span></button>
+  <button data-go="t2">VIP 客户对接 <span class="k">客服 · 宴会</span></button>
+  <button data-go="t3">门店巡检报告 <span class="k">督导</span></button>
+  <div class="group">人事 · 管理</div>
+  <button data-go="t4">招聘 JD 与简历初筛 <span class="k">人事</span></button>
+  <button data-go="t5">数据报表与复盘 <span class="k">运营 · 管理层</span></button>
+  <button data-go="t6">加盟合同审查 <span class="k">加盟 · 法务</span></button>
+  <div class="group">市场</div>
+  <button data-go="t7">新品营销文案 <span class="k">市场</span></button>
+  <div class="group">带教</div>
+  <button data-go="teach">团队带教计划</button>
+  <button data-go="set">设置</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ 首页 ============ -->
+<section id="home">
+  <div class="hero">
+    <h1>连锁餐饮 AI 落地台</h1>
+    <p>按"需求拆解 → 方案设计 → 搭建调试 → 手把手带教 → 长期答疑迭代"设计的 7 个业务场景。每个场景既能直接试用，也附带<b style="color:#fff">扣子 / WorkBuddy 搭建图</b>和<b style="color:#fff">带教要点</b>：目标是让业务、运营、人事团队自己会搭、会改、会维护，而不是只交付一个成品。</p>
+    <p class="disc" style="color:#a6978a">品牌"川味小馆"、门店、人员、数据均为虚构示例。每个工具点「填入示例」→「运行」即可看到效果，无需注册或配置。</p>
+  </div>
+
+  <h2>落地五步</h2>
+  <div class="steps">
+    <div><b>需求拆解</b>和各部门过一遍日常工作：哪些事每天重复、按小时耗时、出错代价高</div>
+    <div><b>方案设计</b>每个痛点定平台、定流程、定"哪一步必须人来拍板"</div>
+    <div><b>搭建调试</b>用真实历史数据跑 20-30 条测试案例，达标再上线</div>
+    <div><b>手把手带教</b>线下跟练：学员在自己电脑上从零搭一遍，不是看演示</div>
+    <div><b>答疑迭代</b>每个工具一张维护卡，"没用"反馈每周汇总，持续改</div>
+  </div>
+
+  <h2>双平台怎么分工</h2>
+  <div class="card tw">
+    <table>
+      <tr><th style="width:120px">平台</th><th>适合干什么</th><th>本台对应场景</th></tr>
+      <tr><td><span class="badge b-coze">扣子 Coze</span></td><td>多人共用、流程固定的标准化工作：工作流 + 知识库 + 智能体，可发布到企业微信、飞书等渠道</td><td>客诉分级、VIP 客户对接、门店巡检、新品文案</td></tr>
+      <tr><td><span class="badge b-wb">WorkBuddy</span></td><td>员工个人电脑上的 AI 助手：处理本地 Excel / Word / 简历文件，可在企业微信用一句话远程下指令，支持 Skills 和 MCP</td><td>招聘简历初筛、数据报表与复盘、加盟合同审查</td></tr>
+    </table>
+    <p class="disc">分工原则：对外、多人用、要统一口径的 → 扣子；文件在员工电脑上、内容敏感（合同、简历、经营数据）、个人提效的 → WorkBuddy。</p>
+  </div>
+
+  <h2>7 个场景</h2>
+  <div class="grid" id="tiles"></div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>三条红线（写进带教第一课）</h3>
+    <ul class="tight">
+      <li><b>食品安全不交给 AI 回复：</b>涉及拉肚子、异物、变质的客诉，代码节点先拦截，直接转店长和品控电话处理。</li>
+      <li><b>AI 出草稿，人来拍板：</b>合同、录用、对外回复都有人工确认环节，AI 不直接发出去。</li>
+      <li><b>敏感数据不出公司电脑：</b>合同、简历、经营数据优先用 WorkBuddy 在本地处理，不上传到公共平台。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 工具页（由脚本生成） ============ -->
+<div id="toolPages"></div>
+
+<!-- ============ 带教计划 ============ -->
+<section id="teach">
+  <h1>团队带教计划</h1>
+  <p class="sub">4 周线下为主，每周 1 次集中课 + 群内答疑。每节课学员都要在自己电脑上动手搭，课后交一个能跑的作品。</p>
+  <div class="card tw">
+    <table>
+      <tr><th style="width:70px">周次</th><th style="width:110px">对象</th><th>课程内容（每节约 2 小时）</th><th>学员课后产出</th></tr>
+      <tr><td>第 1 周</td><td>全员</td><td>AI 能做什么、不能做什么；三条红线；扣子账号与 WorkBuddy 安装；现场用 AI 写一条差评回复</td><td>每个团队列出 3 个最费时的重复工作</td></tr>
+      <tr><td>第 2 周</td><td>运营 · 客服</td><td>跟练搭「客诉分级」工作流：开始节点 → 代码节点拦截食安词 → 大模型分级 → 输出；再搭 VIP 知识库</td><td>本团队真实差评 20 条跑通，命中率自查</td></tr>
+      <tr><td>第 2 周</td><td>人事</td><td>WorkBuddy 读简历文件夹 → 按岗位要求打分 → 生成表格；写面试邀约模板</td><td>用一个在招岗位筛一轮真实简历</td></tr>
+      <tr><td>第 3 周</td><td>督导 · 管理层</td><td>巡检报告工作流；WorkBuddy 自动化报表：读门店日报 Excel → 找异常 → 企业微信推送</td><td>一份真实周报由 AI 初稿生成</td></tr>
+      <tr><td>第 4 周</td><td>各团队</td><td>学员独立改造一个工具（改提示词、加知识库条目、加一个节点）；写维护卡；评审会</td><td>每个工具一张维护卡 + 负责人</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>维护卡模板（每个工具一张，贴在共享文档里）</h3>
+    <div class="tw"><table>
+      <tr><th style="width:150px">项目</th><th>写什么</th><th style="width:30%">示例（客诉分级）</th></tr>
+      <tr><td>负责人</td><td>谁对这个工具的效果负责</td><td>客服主管</td></tr>
+      <tr><td>改提示词在哪</td><td>扣子工作流里哪个节点；WorkBuddy 哪个 Skill</td><td>「大模型 · 分级」节点</td></tr>
+      <tr><td>知识库 / 词表怎么更新</td><td>谁更新、多久一次、在哪个表格</td><td>品控每月更新食安关键词表</td></tr>
+      <tr><td>出错先看哪</td><td>最常见的 3 种问题和处理办法</td><td>分级错 → 把案例加进测试集</td></tr>
+      <tr><td>测试集</td><td>20-30 条固定案例，每次修改后跑一遍</td><td>历史差评 30 条，含 5 条食安</td></tr>
+    </table></div>
+  </div>
+  <div class="card">
+    <h3>长期答疑与迭代</h3>
+    <ul class="tight">
+      <li>企业微信答疑群：工作日当天回复，复杂问题约线下。</li>
+      <li>每个工具输出下方有"有用 / 没用"按钮，每周汇总"没用"的案例，作为下周优化清单。</li>
+      <li>每月一次复盘：各工具使用次数、采纳率、节省工时，决定下个月新增或下线哪个工具。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 设置 ============ -->
+<section id="set">
+  <h1>设置</h1>
+  <p class="sub">默认不需要设置：示例数据直接显示预置结果。如果想改输入内容、实时调用 AI，在这里填 DeepSeek API Key（只保存在本机浏览器）。</p>
+  <div class="card">
+    <label class="l">DeepSeek API Key</label>
+    <input id="key" type="password" placeholder="sk-...">
+    <div class="btns"><button class="btn" onclick="Settings.save()">保存</button><button class="btn ghost" onclick="Settings.clear()">清除</button></div>
+    <div id="setout" class="note" style="margin-top:10px"></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ================= 基础工具 ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S = {
+  get(k, d){ try{ const v = localStorage.getItem('rst_' + k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('rst_' + k, JSON.stringify(v)); }catch(e){} }
+};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const lvPill = lv => `<span class="pill ${/P0|高|紧急|严重/.test(lv) ? 'p-bad' : /P1|中|一般/.test(lv) ? 'p-warn' : 'p-ok'}">${esc(lv)}</span>`;
+
+async function llm(system, user){
+  const key = S.get('key', '');
+  const res = await fetch('https://api.deepseek.com/chat/completions', {
+    method:'POST', headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + key},
+    body: JSON.stringify({model:'deepseek-chat', temperature:0.4, response_format:{type:'json_object'},
+      messages:[{role:'system', content:system + '\n只输出 JSON，不要任何解释。'}, {role:'user', content:user}]})
+  }).catch(e => { throw new Error('连不上 AI 接口：' + e.message); });
+  if(!res.ok){ const t = await res.text(); throw new Error(`AI 接口返回错误 ${res.status}${res.status === 401 ? '（Key 不正确）' : res.status === 402 ? '（余额不足）' : ''}\n${t.slice(0, 200)}`); }
+  const d = await res.json(), txt = d.choices?.[0]?.message?.content || '';
+  try{ return JSON.parse(txt); }catch(e){ const m = txt.match(/\{[\s\S]*\}/); if(m) return JSON.parse(m[0]); throw new Error('AI 返回格式不对，请再点一次。'); }
+}
+
+function fb(tool){
+  const id = 'fb' + Math.random().toString(36).slice(2, 8);
+  return `<div class="fb" id="${id}">这次结果对你有用吗？<button onclick="vote('${tool}','up','${id}',this)">有用</button><button onclick="vote('${tool}','down','${id}',this)">没用</button><span></span></div>`;
+}
+function vote(tool, v, id, btn){
+  const box = $(id); box.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+  const l = S.get('fb', []); l.push({tool, v, ts: Date.now()}); S.set('fb', l.slice(-300));
+  box.querySelector('span').textContent = v === 'up' ? '已记录' : '已记录，会进入下周优化清单';
+}
+
+/* ================= 7 个工具的定义 ================= */
+const TOOLS = [
+/* ---------- T1 客诉 ---------- */
+{id:'t1', name:'客诉分级与回复', dept:'客服 · 品控', plat:'coze',
+ desc:'美团、点评差评和企业微信投诉批量进来，自动分级；食安类直接转人工，其余生成回复草稿和门店整改单。',
+ inputLabel:'客诉内容（每行一条，格式：渠道｜门店｜内容）',
+ sample:`美团 1星｜春熙路店｜等了40分钟才上菜，催了三次，服务员还翻白眼，再也不来了
+大众点评 2星｜高新店｜水煮鱼里吃出一根头发，跟店员说了只给换了一份，一句道歉都没有
+企业微信客服｜双楠店｜昨天在你们店吃完回家拉肚子到半夜，孩子也吐了，你们食材到底新不新鲜？
+大众点评 3星｜春熙路店｜味道还行，就是包间空调太冷了，跟服务员说了也没调`,
+ pre(text){
+   const words = ['拉肚子','腹泻','呕吐','吐了','食物中毒','发烧','过敏','变质','发霉','异物','虫','玻璃','头发'];
+   const lines = text.split('\n').map(s => s.trim()).filter(Boolean);
+   const hits = lines.map((l, i) => ({i: i + 1, w: words.filter(w => l.includes(w))})).filter(x => x.w.length);
+   return `<div class="card"><h3>① 代码节点 · 食安关键词拦截（不调用 AI，0 成本）</h3>${hits.length ? hits.map(h => `<div>第 ${h.i} 条命中：${h.w.map(w => `<span class="pill p-bad">${esc(w)}</span>`).join('')}</div>`).join('') : '<div class="note">未命中食安关键词。</div>'}<p class="disc">"拉肚子、呕吐"类命中后标记为 P0，不让 AI 写回复，强制转人工；"头发"等异物进入 P1。</p></div>`;
+ },
+ system:`你是连锁餐饮品牌"川味小馆"的客诉处理专员。对每条客诉分级并给出处理方案。
+分级：P0=食品安全/身体不适（必须人工电话，30分钟内）；P1=异物、严重服务冲突（2小时内回复+门店整改）；P2=一般体验问题（24小时内回复）。
+P0 不写对外回复，reply 填"（不由 AI 回复，转人工）"。回复要求：先道歉、说具体改进、不推卸、不承诺现金赔偿，80字内。
+输出 JSON：{"items":[{"no":1,"store":"","channel":"","category":"上菜慢/服务态度/异物/食品安全/环境/其他","level":"P0|P1|P2","human":true,"reply":"","ticket":{"owner":"责任人","action":"门店整改动作","deadline":"时限"}}],"summary":"一句话汇总，给运营负责人看"}`,
+ cache:{items:[
+   {no:1, store:'春熙路店', channel:'美团', category:'上菜慢 + 服务态度', level:'P1', human:false,
+    reply:'非常抱歉让您久等，还遇到了不好的服务态度，这是我们的问题。店长已调整晚高峰传菜排班，并对当班服务员做了沟通。希望有机会请您再来，我们当面改进。', ticket:{owner:'春熙路店店长', action:'核查当晚出餐时长记录；晚高峰增加 1 名传菜；当班服务员服务话术复训', deadline:'2 小时内回复，3 天内整改'}},
+   {no:2, store:'高新店', channel:'大众点评', category:'异物', level:'P1', human:true,
+    reply:'非常抱歉！菜品里出现头发是我们后厨管理的失误，处理时也没有及时道歉，再次向您说声对不起。高新店已对后厨帽子、发网佩戴做了全员检查，店长会私信联系您。', ticket:{owner:'高新店店长 + 品控', action:'后厨全员发网 / 帽子检查；当日出餐口加一道目检；店长私信致歉', deadline:'2 小时内联系顾客'}},
+   {no:3, store:'双楠店', channel:'企业微信客服', category:'食品安全', level:'P0', human:true,
+    reply:'（不由 AI 回复，转人工）', ticket:{owner:'双楠店店长 + 区域品控', action:'30 分钟内电话联系顾客了解就医情况；封存当日同批次食材留样；排查冷链记录', deadline:'30 分钟内'}},
+   {no:4, store:'春熙路店', channel:'大众点评', category:'环境', level:'P2', human:false,
+    reply:'谢谢您对口味的认可，包间空调太冷让您不舒服了，很抱歉。我们已提醒服务员主动询问温度，下次来也可以随时让我们调整。', ticket:{owner:'春熙路店值班经理', action:'包间空调默认温度调到 26℃；服务员入座时主动询问', deadline:'24 小时内回复'}}
+ ], summary:'4 条客诉：P0 食安 1 条（双楠店，已转人工，30 分钟内必须电话联系），P1 2 条，P2 1 条；春熙路店本周 2 条，需关注晚高峰出餐。'},
+ render(d){
+   return `<div class="card"><h3>② 大模型 · 分级与回复草稿</h3><p><b>汇总：</b>${esc(d.summary)}</p>${(d.items || []).map(x => `
+     <div class="item"><h4>${lvPill(x.level)} ${esc(x.store)} · ${esc(x.channel)} <span class="pill">${esc(x.category)}</span>${x.human || x.level === 'P0' ? '<span class="pill p-bad">转人工</span>' : ''}</h4>
+     <dl class="kv"><dt>回复草稿</dt><dd>${esc(x.reply)}</dd><dt>整改单</dt><dd>${esc(x.ticket?.action)}</dd><dt>责任人</dt><dd>${esc(x.ticket?.owner)}</dd><dt>时限</dt><dd>${esc(x.ticket?.deadline)}</dd></dl></div>`).join('')}</div>`;
+ },
+ nodes:[['开始','start','差评 / 投诉文本','美团、点评导出，或企业微信客服转入'],['代码','code','食安词拦截','命中"拉肚子"等直接标 P0'],['条件','cond','是否 P0','是 → 跳过 AI，推送店长和品控'],['大模型','llm','分级 + 回复草稿','按 P0/P1/P2 规则输出 JSON'],['插件','kb','写入工单表','飞书 / 腾讯文档表格，带时限'],['结束','out','推送企业微信群','店长群 @ 责任人']],
+ teach:{who:'客服 3 人 + 品控 1 人',hours:'2 课时跟练',practice:'用本店上月 20 条真实差评跑一遍，人工核对分级',owner:'客服主管维护提示词，品控维护食安词表'}},
+
+/* ---------- T2 VIP ---------- */
+{id:'t2', name:'VIP 客户对接', dept:'客服 · 宴会', plat:'coze',
+ desc:'团餐、宴会、企业客户咨询：先从知识库查套餐、包间、开票规则，再生成回复和预订单，查不到的转人工。',
+ inputLabel:'客户发来的消息',
+ sample:'你好，我们公司下周六晚上年会，大概35个人，想订包间，人均150左右，能安排吗？要能开专票，另外有没有不辣的菜？',
+ kb:[
+   {t:'宴会套餐', c:'宴会套餐分 128 / 168 / 228 元每位三档，10 人起订；168 档含 12 道菜和 2 道不辣菜，可按人数增减。'},
+   {t:'包间容量', c:'春熙路店：大包间 2 间，每间最多 20 人，可打通合并为 40 人；高新店：大包间 1 间，最多 16 人。'},
+   {t:'发票规则', c:'支持开具增值税普通发票和专用发票；专票需提供公司全称、税号、开户行及账号，结账后 3 个工作日内开出。'},
+   {t:'不辣菜品', c:'每档宴会套餐都可把辣度调为微辣或不辣；固定不辣菜：清炖萝卜牛腩、蒜蓉西兰花、冰糖雪梨。'},
+   {t:'订金规则', c:'20 人以上宴会需付 30% 订金锁定包间，提前 72 小时取消可全额退还。'},
+   {t:'会员权益', c:'金卡会员生日月 9 折，宴会消费可累计积分，每 100 元积 1 分。'},
+   {t:'停车', c:'春熙路店合作停车场凭消费小票免费 3 小时。'}
+ ],
+ pre(text){
+   const hits = rank(text, this.kb, d => d.t + d.c, 4);
+   return `<div class="card"><h3>① 知识库检索 · Top ${hits.length}</h3>${hits.map(h => `<div class="item"><h4>${esc(h.d.t)} <span class="pill">匹配 ${h.score}</span></h4><div class="note">${esc(h.d.c)}</div></div>`).join('')}<p class="disc">AI 只能根据检索到的条目回答，知识库里没有的（比如特价、临时活动）一律转人工确认。</p></div>`;
+ },
+ system(){ return `你是"川味小馆"宴会客服。只能根据下面知识库回答，没写的内容不许编，放进 need_confirm。
+知识库：${JSON.stringify(this.kb)}
+输出 JSON：{"reply":"可直接发给客户的回复，口语化，150字内","order":{"date":"","people":"","budget":"","store":"","room":"","package":"","invoice":"","notes":""},"need_confirm":["需要人工确认的事项"],"upsell":"一句合适的加推建议（不强推）"}`; },
+ cache:{reply:'您好，感谢选择川味小馆！35 人可以安排：春熙路店两间大包间打通，最多坐 40 人，正好合适。人均 150 左右推荐 168 元档宴会套餐（12 道菜，含 2 道不辣菜），辣度也能整体调成微辣或不辣。专票可以开，结账时提供公司全称、税号、开户行和账号就行。20 人以上需付 30% 订金锁定包间，提前 72 小时取消全额退。我先帮您预留下周六晚上，确认一下具体到店时间？',
+   order:{date:'下周六 晚上（时间待确认）', people:'35 人', budget:'人均约 150 元', store:'春熙路店', room:'大包间 ×2 打通', package:'168 元 / 位宴会套餐', invoice:'增值税专用发票', notes:'需要不辣菜；年会场景'},
+   need_confirm:['下周六晚春熙路店两间大包间是否都空闲（需查预订系统）','168 档对 35 人的总价和菜品数量调整','年会是否需要投影、音响（知识库未记录，需门店确认）'],
+   upsell:'年会常有抽奖、致辞环节，可以问一句是否需要提前布置或准备生日蛋糕。'},
+ render(d){
+   const o = d.order || {};
+   return `<div class="card"><h3>② 大模型 · 回复与预订单</h3><label class="l">回复草稿</label><div class="out">${esc(d.reply)}</div>
+     <label class="l">自动生成的预订单</label><div class="tw"><table>${[['日期','date'],['人数','people'],['预算','budget'],['门店','store'],['包间','room'],['套餐','package'],['发票','invoice'],['备注','notes']].map(([k, f]) => `<tr><th style="width:80px">${k}</th><td>${esc(o[f])}</td></tr>`).join('')}</table></div>
+     <label class="l">需人工确认（知识库里查不到或要查系统）</label><ul class="tight">${(d.need_confirm || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+     <p class="note"><b>加推建议：</b>${esc(d.upsell)}</p></div>`;
+ },
+ nodes:[['开始','start','客户消息','企业微信客服 / 公众号'],['知识库','kb','检索 Top 3','套餐、包间、开票、订金'],['大模型','llm','回复 + 预订单','只按检索结果回答'],['条件','cond','有待确认项？','有 → 通知宴会经理'],['结束','out','发回客户 / 写入预订表','人工点确认后发送']],
+ teach:{who:'宴会经理 + 客服',hours:'2 课时',practice:'把现有宴会报价单、包间信息整理成知识库，一条一段',owner:'宴会经理每月更新套餐和价格'}},
+
+/* ---------- T3 巡检 ---------- */
+{id:'t3', name:'门店巡检报告', dept:'督导', plat:'coze',
+ desc:'督导在企业微信发一段语音或文字，自动生成按维度打分的巡检报告、整改清单和群通报。',
+ inputLabel:'督导巡检记录（语音转文字也可以，口语化没关系）',
+ sample:'今天下午两点巡检高新店。门口地面有油渍没拖。后厨冻库温度显示零下12度，标准是零下18度。有两个员工没戴帽子。出餐口有三份菜没盖保鲜膜放了好几分钟。卫生间纸巾没了。新来的服务员小王对藤椒鸡新品不熟，问了三遍才答上来。好的方面：前厅很干净，迎宾很热情，备餐间标签都贴了。',
+ system:`你是连锁餐饮品牌的营运督导助理。把督导口语化的巡检记录整理成正式报告。
+维度：食品安全(40分)、卫生环境(25分)、服务(20分)、出品(15分)，按问题扣分。冷链温度、员工未戴帽子属于食品安全，等级为严重。
+输出 JSON：{"store":"","time":"","scores":[{"dim":"","full":40,"score":0,"reason":""}],"total":0,"issues":[{"issue":"","dim":"","level":"严重|一般|轻微","fix":"整改动作","deadline":"","owner":""}],"highlights":["做得好的"],"notice":"发到区域群的通报，100字内"}`,
+ cache:{store:'高新店', time:'今天 14:00', scores:[
+   {dim:'食品安全', full:40, score:26, reason:'冻库温度 -12℃（标准 -18℃）；2 名员工未戴帽子；3 份出餐菜品未覆膜'},
+   {dim:'卫生环境', full:25, score:20, reason:'门口地面油渍；卫生间缺纸巾'},
+   {dim:'服务', full:20, score:16, reason:'新员工对新品不熟悉；迎宾热情加分'},
+   {dim:'出品', full:15, score:13, reason:'出餐口等待时间偏长'}], total:75,
+  issues:[
+   {issue:'冻库温度 -12℃，高于标准 -18℃', dim:'食品安全', level:'严重', fix:'立即检查冻库门封条和压缩机，联系维修；核查库内食材是否需报废', deadline:'今天内', owner:'厨师长'},
+   {issue:'2 名员工未戴帽子', dim:'食品安全', level:'严重', fix:'当班立即整改；明早班前会重申着装标准', deadline:'立即', owner:'值班经理'},
+   {issue:'3 份出餐菜品未覆膜且等待数分钟', dim:'食品安全', level:'一般', fix:'出餐口放保鲜膜和计时提醒；超 3 分钟未取由传菜主管跟进', deadline:'2 天内', owner:'传菜主管'},
+   {issue:'门口地面油渍', dim:'卫生环境', level:'一般', fix:'加入每 2 小时巡场清洁表', deadline:'今天内', owner:'值班经理'},
+   {issue:'卫生间缺纸巾', dim:'卫生环境', level:'轻微', fix:'补齐；纳入每小时巡查', deadline:'立即', owner:'保洁'},
+   {issue:'新员工不熟悉藤椒鸡新品', dim:'服务', level:'一般', fix:'安排新品话术和口味培训，店长抽查', deadline:'3 天内', owner:'店长'}],
+  highlights:['前厅整洁','迎宾热情主动','备餐间标签齐全'],
+  notice:'【巡检通报】高新店今日巡检 75 分。冻库温度不达标、员工未戴帽子两项为严重问题，厨师长今天内完成冻库检修并核查食材。前厅整洁、迎宾热情值得表扬。整改结果请于明天 18:00 前拍照回传。'},
+ render(d){
+   return `<div class="card"><h3>巡检报告 · ${esc(d.store)} · ${esc(d.time)} <span class="pill ${d.total >= 85 ? 'p-ok' : d.total >= 70 ? 'p-warn' : 'p-bad'}" style="font-size:14px">总分 ${esc(d.total)}</span></h3>
+     <div class="tw"><table><tr><th>维度</th><th>得分</th><th>扣分原因</th></tr>${(d.scores || []).map(s => `<tr><td>${esc(s.dim)}</td><td class="num">${esc(s.score)} / ${esc(s.full)}</td><td>${esc(s.reason)}</td></tr>`).join('')}</table></div>
+     <label class="l">整改清单</label><div class="tw"><table><tr><th>等级</th><th>问题</th><th>整改动作</th><th>责任人</th><th>时限</th></tr>${(d.issues || []).map(i => `<tr><td>${lvPill(i.level)}</td><td>${esc(i.issue)}</td><td>${esc(i.fix)}</td><td>${esc(i.owner)}</td><td>${esc(i.deadline)}</td></tr>`).join('')}</table></div>
+     <p class="note"><b>做得好的：</b>${(d.highlights || []).map(esc).join('、')}</p>
+     <label class="l">区域群通报</label><div class="out">${esc(d.notice)}</div></div>`;
+ },
+ nodes:[['开始','start','督导语音 / 文字','企业微信里直接说'],['大模型','llm','按标准打分','四个维度 + 扣分规则'],['代码','code','算总分、排序','严重问题置顶'],['插件','kb','写入巡检台账','每店每次一行'],['结束','out','推送区域群','@ 店长，次日回传整改照片']],
+ teach:{who:'区域督导',hours:'1.5 课时',practice:'把公司现行巡检表的扣分标准写进提示词，用上月 5 份巡检记录对比人工评分',owner:'营运经理维护评分标准'}},
+
+/* ---------- T4 招聘 ---------- */
+{id:'t4', name:'招聘 JD 与简历初筛', dept:'人事', plat:'wb',
+ desc:'输入岗位要求，生成招聘文案；把收到的简历批量打分，给出面试建议和邀约话术。正式版在人事电脑本地读简历文件夹。',
+ inputLabel:'岗位要求 + 简历（简历之间用 ===== 隔开）',
+ sample:`岗位：门店店长（春熙路店），要求：3年以上餐饮门店管理经验，管理过20人以上团队，熟悉成本控制和排班，能接受晚班。
+=====
+张某，34岁，某火锅连锁店长4年，管理团队35人，负责月营业额约120万，做过2家新店开业筹备，期望薪资1.2万。
+=====
+李某，27岁，某奶茶品牌店长2年，团队8人，熟悉外卖平台运营，期望薪资8千，不接受晚班。
+=====
+王某，38岁，中餐酒楼楼面经理5年，团队25人，负责宴会接待和服务培训，没有独立管店经验，期望薪资1万。`,
+ system:`你是连锁餐饮品牌的招聘助理。根据岗位要求生成招聘文案，并对每份简历按岗位硬性要求逐条打分（100分），指出风险和面试要问的问题。不要对年龄、性别做任何评价，只评估与岗位相关的经验和条件。
+输出 JSON：{"jd":"招聘平台用的岗位文案，200字内","candidates":[{"name":"","score":0,"match":["符合项"],"gap":["不符合或存疑"],"ask":"面试重点要问的一个问题","suggest":"建议面试|待定|不推荐"}],"invite":"面试邀约消息模板，带{姓名}{时间}占位"}`,
+ cache:{jd:'【川味小馆 · 门店店长（春熙路店）】\n负责门店日常营运、团队管理和经营指标达成。\n要求：3 年以上餐饮门店管理经验，带过 20 人以上团队；熟悉排班、食材成本和损耗控制；能接受晚班。\n我们提供：底薪 + 门店利润分红，五险，员工餐，内部晋升区域经理通道。\n欢迎有连锁中餐、火锅管理经验的朋友投递！',
+  candidates:[
+   {name:'张某', score:90, match:['门店店长 4 年','团队 35 人','有营业额管理和新店筹备经验'], gap:['期望薪资处于预算上限，需确认'], ask:'过去一年门店食材成本率是多少，你做过哪些降损耗的动作？', suggest:'建议面试'},
+   {name:'王某', score:68, match:['餐饮管理 5 年','团队 25 人','服务培训经验强'], gap:['没有独立管店经验，成本与排班能力待验证'], ask:'楼面经理期间是否参与过排班和成本核算？举一个具体例子。', suggest:'待定'},
+   {name:'李某', score:45, match:['店长经验 2 年','熟悉外卖平台'], gap:['管理经验不足 3 年','团队 8 人，规模不足','不接受晚班（硬性条件不符）'], ask:'—', suggest:'不推荐'}],
+  invite:'{姓名}您好，我是川味小馆人事。看了您的简历，很希望约您聊聊春熙路店店长岗位。面试时间初定 {时间}，地点在春熙路店二楼办公室，大约 40 分钟。方便的话回复"确认"，时间不合适也可以告诉我，我们再调整。'},
+ render(d){
+   return `<div class="card"><h3>招聘文案</h3><div class="out">${esc(d.jd)}</div>
+     <label class="l">简历初筛（按分数排序）</label><div class="tw"><table><tr><th>候选人</th><th>分数</th><th>符合</th><th>差距 / 风险</th><th>面试必问</th><th>建议</th></tr>${[...(d.candidates || [])].sort((a, b) => b.score - a.score).map(c => `<tr><td><b>${esc(c.name)}</b></td><td class="num">${esc(c.score)}</td><td>${(c.match || []).map(esc).join('<br>')}</td><td>${(c.gap || []).map(esc).join('<br>')}</td><td>${esc(c.ask)}</td><td><span class="pill ${c.suggest === '建议面试' ? 'p-ok' : c.suggest === '待定' ? 'p-warn' : 'p-bad'}">${esc(c.suggest)}</span></td></tr>`).join('')}</table></div>
+     <label class="l">面试邀约模板</label><div class="out">${esc(d.invite)}</div>
+     <p class="disc">AI 只做初筛排序，是否约面由人事决定；提示词已要求不评价年龄、性别等与岗位无关的信息。</p></div>`;
+ },
+ nodes:[['指令','start','企业微信一句话','"筛一下店长岗位的新简历"'],['Skill','code','读简历文件夹','本地 PDF / Word，不上传'],['大模型','llm','逐份打分','按岗位硬性条件'],['Skill','kb','生成 Excel 打分表','存回人事电脑'],['结束','out','回传结果摘要','企业微信消息']],
+ teach:{who:'人事 2 人',hours:'2 课时',practice:'用一个在招岗位的真实简历跑一轮，和人工筛选结果对比',owner:'人事主管维护各岗位的打分标准'}},
+
+/* ---------- T5 报表复盘 ---------- */
+{id:'t5', name:'数据报表与复盘', dept:'运营 · 管理层', plat:'wb',
+ desc:'把各门店周报数据贴进来（正式版自动读 Excel），程序算涨跌、标异常，AI 写复盘要点和复盘会提纲，推送管理群。',
+ inputLabel:'门店周数据（表格直接粘贴，逗号或 Tab 分隔，第一行是表头）',
+ sample:`门店,本周营业额,上周营业额,客单价,翻台率,差评数,外卖占比
+春熙路店,186000,198000,92,3.1,6,22%
+高新店,142000,139000,88,2.8,3,35%
+双楠店,98000,121000,79,2.1,4,41%
+天府三街店,165000,158000,95,3.0,1,28%
+建设路店(加盟),88000,86000,74,2.4,2,46%
+金沙店(加盟),71000,90000,70,1.9,5,38%`,
+ pre(text){
+   const rows = text.trim().split('\n').map(l => l.split(/[,\t，]/).map(s => s.trim()));
+   const h = rows[0], data = rows.slice(1).filter(r => r.length >= 3);
+   const iNow = h.findIndex(x => /本周/.test(x)), iPrev = h.findIndex(x => /上周/.test(x)), iBad = h.findIndex(x => /差评/.test(x));
+   if(iNow < 0 || iPrev < 0) return '<div class="card note">提示：表头需要包含"本周营业额"和"上周营业额"，程序才能计算环比。</div>';
+   let sumN = 0, sumP = 0;
+   const body = data.map(r => {
+     const n = +r[iNow], p = +r[iPrev], ch = p ? (n - p) / p * 100 : 0; sumN += n; sumP += p;
+     const flag = ch <= -10 ? '<span class="pill p-bad">下滑超 10%</span>' : (iBad >= 0 && +r[iBad] >= 5) ? '<span class="pill p-warn">差评偏多</span>' : '';
+     return `<tr>${r.map((c, i) => `<td class="${i ? 'num' : ''}">${esc(c)}</td>`).join('')}<td class="num ${ch >= 0 ? 'up' : 'dn'}">${ch >= 0 ? '+' : ''}${ch.toFixed(1)}%</td><td>${flag}</td></tr>`;
+   }).join('');
+   const tch = sumP ? (sumN - sumP) / sumP * 100 : 0;
+   return `<div class="card"><h3>① 代码节点 · 计算环比、标异常（不调用 AI）</h3><div class="tw"><table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}<th>环比</th><th>标记</th></tr>${body}</table></div>
+     <p class="note">合计营业额 ${sumN.toLocaleString()} 元，环比 <b class="${tch >= 0 ? 'up' : 'dn'}">${tch >= 0 ? '+' : ''}${tch.toFixed(1)}%</b>。数字由程序计算，AI 只负责解读，避免算错。</p></div>`;
+ },
+ system:`你是连锁餐饮品牌的经营分析助理。根据门店周数据写复盘。数字以输入为准，不要编造输入里没有的数据；原因只能写成"可能原因/待核实"。
+输出 JSON：{"headline":"一句话结论","anomalies":[{"store":"","what":"异常是什么（带数字）","why":"可能原因（待核实）","action":"建议动作"}],"good":["值得复制的做法或表现好的门店"],"meeting":["复盘会讨论提纲，3-5条"],"push":"推送管理群的消息，120字内"}`,
+ cache:{headline:'整体营业额环比 -5.3%，主要拖累来自双楠店（-19.0%）和金沙店（-21.1%），两家外卖占比都高，需要先查外卖渠道。',
+  anomalies:[
+   {store:'双楠店', what:'营业额 9.8 万，环比 -19.0%；翻台率 2.1 为直营最低', why:'可能原因：周边新开竞品、外卖平台排名下降（外卖占比 41%）、上周有 P0 客诉影响口碑（待核实）', action:'查外卖平台曝光和评分变化；店长本周拜访周边 3 家竞品；跟进食安客诉处理结果'},
+   {store:'金沙店(加盟)', what:'营业额 7.1 万，环比 -21.1%；差评 5 条，客单价 70 元为全区最低', why:'可能原因：出品稳定性下降、促销力度过大拉低客单（待核实）', action:'督导本周到店巡检出品；核对加盟店是否自行做了额外折扣'},
+   {store:'春熙路店', what:'营业额环比 -6.1%，差评 6 条为全区最多', why:'可能原因：晚高峰出餐慢（本周客诉有体现）', action:'加 1 名晚高峰传菜，下周看差评数变化'}],
+  good:['天府三街店营业额 +4.4%、客单价 95 元全区最高、差评仅 1 条，可总结推荐菜和点单话术供其他门店参考','高新店环比 +2.2%，外卖占比 35% 情况下仍保持增长'],
+  meeting:['双楠、金沙两店下滑：外卖渠道 vs 堂食，各自贡献多少？','加盟店价格与促销是否统一执行？','春熙路晚高峰出餐：排班调整方案','天府三街店做对了什么，哪些能复制？','下周目标：差评总数从 21 条降到 15 条以内'],
+  push:'【周经营简报】本周 6 店合计 75.0 万，环比 -5.3%。双楠店 -19.0%、金沙店 -21.1% 需重点关注，周三复盘会请两店店长准备外卖数据。天府三街店客单价和口碑最佳，请分享经验。'},
+ render(d){
+   return `<div class="card"><h3>② 大模型 · 复盘要点</h3><p><b>${esc(d.headline)}</b></p>
+     <div class="tw"><table><tr><th>门店</th><th>异常</th><th>可能原因（待核实）</th><th>建议动作</th></tr>${(d.anomalies || []).map(a => `<tr><td><b>${esc(a.store)}</b></td><td>${esc(a.what)}</td><td>${esc(a.why)}</td><td>${esc(a.action)}</td></tr>`).join('')}</table></div>
+     <label class="l">值得复制</label><ul class="tight">${(d.good || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+     <label class="l">复盘会提纲</label><ol class="tight">${(d.meeting || []).map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+     <label class="l">管理群推送</label><div class="out">${esc(d.push)}</div></div>`;
+ },
+ nodes:[['定时','start','每周一 9:00','WorkBuddy 定时任务'],['Skill','code','读门店日报 Excel','汇总、算环比'],['代码','code','标异常','下滑超 10%、差评 ≥5'],['大模型','llm','写复盘要点','只解读不改数字'],['结束','out','推送管理群','附 Excel 汇总表']],
+ teach:{who:'运营专员 + 区域经理',hours:'2 课时',practice:'用最近 4 周真实数据各跑一次，对比自己手写的周报',owner:'运营专员维护数据模板和异常规则'}},
+
+/* ---------- T6 合同 ---------- */
+{id:'t6', name:'加盟合同审查', dept:'加盟 · 法务', plat:'wb',
+ desc:'加盟合同、供应商合同条款逐条找风险，给出修改建议和缺失条款清单。只做初审，最终由法务确认；合同在本地处理不外传。',
+ inputLabel:'合同条款（可粘贴部分条款）',
+ sample:`第三条 加盟费：乙方一次性支付加盟费8万元，合同签订后不予退还。
+第五条 保证金：乙方缴纳保证金5万元，合同期满后退还。
+第七条 区域保护：甲方在乙方门店周边适当范围内不再发展新加盟店。
+第九条 供应链：乙方所有食材、调料须从甲方指定渠道采购，价格由甲方确定。
+第十二条 违约责任：乙方违反本合同任何条款，甲方有权立即解除合同，加盟费和保证金不予退还。
+第十五条 合同期限：本合同有效期3年。`,
+ system:`你是连锁餐饮品牌（甲方，总部）的合同初审助理。从总部角度审查加盟合同，找出容易引发纠纷、执行不清或可能不合规的条款，给出修改建议；同时列出缺失的常见条款。说明这只是初审，结论需法务确认。
+输出 JSON：{"risks":[{"clause":"条款号+名称","level":"高|中|低","issue":"风险说明","suggest":"修改建议（给出改后的条款写法）"}],"missing":["缺失条款"],"summary":"一句话总结"}`,
+ cache:{summary:'6 条中有 3 条高风险，主要是表述模糊和违约条款过重，容易在解约时引发纠纷；另缺少食品安全责任、商标使用等 5 类常见条款。',
+  risks:[
+   {clause:'第七条 区域保护', level:'高', issue:'"周边适当范围"没有量化，开新店时极易产生争议', suggest:'改为："甲方承诺在乙方门店直线距离 2 公里范围内，合同期内不再开设直营店或授权新的加盟店。"'},
+   {clause:'第十二条 违约责任', level:'高', issue:'"违反任何条款即可解除并没收全部款项"责任明显不对等，轻微违约也适用，发生纠纷时可能被认定显失公平', suggest:'区分轻微违约和根本违约：轻微违约先书面通知限期 15 日整改；仅在食品安全事故、擅自转让、拖欠货款超 60 日等根本违约时可解除合同。'},
+   {clause:'第九条 供应链', level:'高', issue:'"价格由甲方确定"缺少定价机制，加盟商容易质疑加价过高', suggest:'补充："指定物料价格每季度公示，与市场同类产品价格差异超过 15% 时，乙方可提出复核。"'},
+   {clause:'第五条 保证金', level:'中', issue:'只写"期满后退还"，没有退还时限和扣除情形', suggest:'补充："合同期满且乙方无未结清货款、无违约情形的，甲方于 30 日内无息退还；存在欠款的可从中抵扣。"'},
+   {clause:'第三条 加盟费', level:'中', issue:'"不予退还"若甲方未履行开业支持义务，可能产生争议', suggest:'列明加盟费对应的服务内容（选址评估、培训天数、开业督导），甲方未履行时的处理方式。'},
+   {clause:'第十五条 合同期限', level:'低', issue:'未约定续约条件和到期后的去品牌化要求', suggest:'补充续约优先权条件，以及到期不续约时 30 日内拆除门头、停止使用商标。'}],
+  missing:['食品安全责任划分与事故处理','商标、装修设计使用范围','经营数据报送义务（如每周营业额）','培训与督导的频次和费用','合同转让与门店转让的审批']},
+ render(d){
+   return `<div class="card"><h3>合同初审结果</h3><p><b>${esc(d.summary)}</b></p>
+     <div class="tw"><table><tr><th>等级</th><th style="width:130px">条款</th><th>风险</th><th>修改建议</th></tr>${(d.risks || []).map(r => `<tr><td>${lvPill(r.level)}</td><td>${esc(r.clause)}</td><td>${esc(r.issue)}</td><td>${esc(r.suggest)}</td></tr>`).join('')}</table></div>
+     <label class="l">缺失的常见条款</label><ul class="tight">${(d.missing || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+     <p class="disc">本结果为 AI 初审，不构成法律意见，正式修改请由法务或律师确认。</p></div>`;
+ },
+ nodes:[['指令','start','"审一下这份合同"','拖入 Word 文件'],['Skill','code','读取合同全文','本地处理，不上传'],['大模型','llm','逐条审查','对照公司审查清单'],['Skill','kb','生成批注版 Word','风险条款标黄'],['结束','out','交法务确认','AI 不做最终判断']],
+ teach:{who:'加盟经理 + 法务',hours:'1.5 课时',practice:'把公司过去合同纠纷整理成"审查清单"放进提示词',owner:'法务维护审查清单'}},
+
+/* ---------- T7 文案 ---------- */
+{id:'t7', name:'新品营销文案', dept:'市场', plat:'coze',
+ desc:'输入新品信息，一次生成小红书、朋友圈、点评公告和门店海报标语，并自动检查广告法禁用词。',
+ inputLabel:'新品信息',
+ sample:'新品：藤椒鸡。卖点：现杀土鸡，青花椒现熬藤椒油，麻而不燥，冷吃热吃都行。价格：68元/份，上市首周第二份半价。上市时间：下周一，全部门店。目标人群：年轻白领、聚餐。',
+ system:`你是连锁川菜品牌的新媒体文案。根据新品信息生成多平台文案，符合广告法：不得用"最、第一、顶级、100%"等绝对化用语，不夸大功效。
+输出 JSON：{"xhs":{"title":"小红书标题，20字内","body":"正文200字内，带3-5个话题标签"},"moments":"朋友圈文案，60字内","dianping":"大众点评店铺公告，80字内","poster":["门店海报主标语3条，每条12字内"],"check":"广告法自查结果，一句话"}`,
+ cache:{xhs:{title:'麻到发光！这只藤椒鸡我先冲了', body:'下班约饭终于找到新目标🌿\n川味小馆下周一上新【藤椒鸡】，土鸡现杀，青花椒现熬藤椒油，第一口是清香的麻，后劲回甜，不燥不呛。\n冷吃配啤酒、热吃拌米饭都很香，一份 68 元，四个人分刚好。\n上市首周第二份半价，聚餐的姐妹直接两份起点～\n#成都美食 #川菜推荐 #藤椒鸡 #下班去哪吃 #聚餐好去处'},
+  moments:'新品藤椒鸡下周一上市🌿 现熬藤椒油，麻而不燥。首周第二份半价，约起来！',
+  dianping:'【新品上市】下周一起全部门店上新藤椒鸡，现杀土鸡配现熬藤椒油，68 元 / 份，上市首周第二份半价，欢迎品尝。',
+  poster:['一口清麻，回味是甜','现熬藤椒油 · 麻而不燥','新品藤椒鸡 第二份半价'],
+  check:'已自查：未使用"最""第一""顶级"等绝对化用语；"现杀""现熬"需门店确认实际操作属实后再发布。'},
+ render(d){
+   return `<div class="card"><h3>多平台文案</h3>
+     <label class="l">小红书</label><div class="out"><b>${esc(d.xhs?.title)}</b>\n\n${esc(d.xhs?.body)}</div>
+     <label class="l">朋友圈</label><div class="out">${esc(d.moments)}</div>
+     <label class="l">大众点评公告</label><div class="out">${esc(d.dianping)}</div>
+     <label class="l">门店海报标语</label><ul class="tight">${(d.poster || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+     <p class="note"><span class="pill p-ok">广告法自查</span>${esc(d.check)}</p></div>`;
+ },
+ nodes:[['开始','start','新品信息','卖点、价格、活动'],['大模型','llm','分平台生成','并行 4 个分支'],['代码','code','禁用词扫描','最、第一、100% 等'],['条件','cond','有违规词？','有 → 退回重写'],['结束','out','汇总给市场审核','确认后发布']],
+ teach:{who:'市场 1-2 人',hours:'1.5 课时',practice:'用过去 3 个爆款文案提炼品牌语气，写进提示词',owner:'市场负责人维护品牌语气和禁用词表'}}
+];
+
+/* ================= 检索（字词重合打分，不调用 AI） ================= */
+function grams(s){ s = String(s).replace(/[\s，。、？！,.?!：:]/g, ''); const g = new Set(); for(let i = 0; i < s.length - 1; i++) g.add(s.slice(i, i + 2)); return g; }
+function rank(q, docs, textOf, k = 3){
+  const qg = grams(q);
+  return docs.map(d => { const g = grams(textOf(d)); let n = 0; qg.forEach(x => { if(g.has(x)) n++; }); return {d, score: n}; })
+    .filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, k);
+}
+
+/* ================= 生成工具页 ================= */
+const PLAT = {coze:'<span class="badge b-coze">扣子 Coze</span>', wb:'<span class="badge b-wb">WorkBuddy</span>'};
+function toolPage(t){
+  const flow = t.nodes.map((n, i) => `${i ? '<div class="arr">→</div>' : ''}<div class="node ${n[1]}"><span class="t">${esc(n[0])}</span><b>${esc(n[2])}</b>${esc(n[3])}</div>`).join('');
+  return `<section id="${t.id}">
+    <h1>${esc(t.name)}</h1>
+    <p class="sub">${PLAT[t.plat]}<span class="badge b-dept">${esc(t.dept)}</span> ${esc(t.desc)}</p>
+    <div class="tabs" data-for="${t.id}"><button class="on" data-v="try">试用</button><button data-v="build">怎么搭 · 怎么教</button></div>
+    <div id="${t.id}-try">
+      <div class="card">
+        <label class="l">${esc(t.inputLabel)}</label>
+        <textarea id="${t.id}-in"></textarea>
+        <div class="btns"><button class="btn ghost" onclick="fillSample('${t.id}')">填入示例</button><button class="btn" id="${t.id}-btn" onclick="runTool('${t.id}')">运行</button></div>
+      </div>
+      <div id="${t.id}-out"></div>
+    </div>
+    <div id="${t.id}-build" style="display:none">
+      <div class="card"><h3>搭建图 · ${PLAT[t.plat]}</h3><div class="flow">${flow}</div>
+        <p class="disc">${t.plat === 'coze' ? '扣子里按这个顺序拖节点即可；"插件"节点可换成腾讯文档 / 飞书表格，"结束"可发布到企业微信。' : 'WorkBuddy 在员工电脑上运行，可在企业微信用一句话下指令；Skill 可零代码创建，也可把扣子工作流通过 MCP 接进来。'}</p></div>
+      <div class="card"><h3>带教要点</h3><div class="teach">
+        <div><b>教谁</b>${esc(t.teach.who)}</div><div><b>课时</b>${esc(t.teach.hours)}</div>
+        <div><b>课后练习</b>${esc(t.teach.practice)}</div><div><b>谁来维护</b>${esc(t.teach.owner)}</div></div></div>
+    </div>
+  </section>`;
+}
+$('toolPages').innerHTML = TOOLS.map(toolPage).join('');
+$('tiles').innerHTML = TOOLS.map(t => `<div class="tile" onclick="go('${t.id}')"><b>${esc(t.name)}</b><p>${esc(t.desc)}</p>${PLAT[t.plat]}<span class="badge b-dept">${esc(t.dept)}</span></div>`).join('');
+document.querySelectorAll('.tabs[data-for]').forEach(tb => tb.querySelectorAll('button').forEach(b => b.onclick = () => {
+  tb.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  const id = tb.dataset.for; $(id + '-try').style.display = b.dataset.v === 'try' ? '' : 'none'; $(id + '-build').style.display = b.dataset.v === 'build' ? '' : 'none';
+}));
+
+/* ================= 运行 ================= */
+const T = id => TOOLS.find(t => t.id === id);
+function fillSample(id){ $(id + '-in').value = T(id).sample; }
+async function runTool(id){
+  const t = T(id), text = $(id + '-in').value.trim(), out = $(id + '-out'), btn = $(id + '-btn');
+  if(!text){ out.innerHTML = '<div class="err">请先输入内容，或点「填入示例」。</div>'; return; }
+  const isSample = text === t.sample.trim(), key = S.get('key', '');
+  const pre = t.pre ? t.pre.call(t, text) : '';
+  if(!isSample && !key){
+    out.innerHTML = pre + `<div class="err">你修改了示例内容，需要实时调用 AI。演示版默认只为示例数据准备了结果。\n如需实时调用，请到左侧「设置」填入 DeepSeek API Key；或点「填入示例」查看效果。</div>`;
+    return;
+  }
+  btn.disabled = true; const old = btn.textContent; btn.textContent = '处理中…';
+  out.innerHTML = pre + '<div class="card loading"><div class="spin"></div>AI 处理中…</div>';
+  try{
+    let d, mode;
+    if(key){ d = await llm(typeof t.system === 'function' ? t.system.call(t) : t.system, text); mode = '<span class="dot live"></span>实时调用 DeepSeek'; }
+    else { await sleep(700); d = JSON.parse(JSON.stringify(t.cache)); mode = '<span class="dot"></span>演示模式：示例数据的预置结果（填入 Key 后可实时调用）'; }
+    out.innerHTML = pre + `<div class="mode">${mode}</div>` + t.render(d) + fb(id);
+  }catch(e){ out.innerHTML = pre + `<div class="err">${esc(e.message)}</div>`; }
+  btn.disabled = false; btn.textContent = old;
+}
+
+/* ================= 导航与设置 ================= */
+function go(id){
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === id));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.go === id));
+  S.set('tab', id); window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.dataset.go));
+const Settings = {
+  save(){ S.set('key', $('key').value.trim()); $('setout').textContent = $('key').value.trim() ? '已保存，之后运行将实时调用 AI。' : '已清空。'; },
+  clear(){ $('key').value = ''; S.set('key', ''); $('setout').textContent = '已清除，回到演示模式。'; }
+};
+$('key').value = S.get('key', '');
+go(S.get('tab', 'home'));
+</script>
+</body>
+</html>
