@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>轻医美连锁 AI 经营系统</title>
+<style>
+:root{
+  --bg:#f2f4f7;--panel:#fff;--ink:#131c2b;--ink2:#566275;--ink3:#8a94a5;--line:#e0e5ec;
+  --nav:#1f1a17;--nav2:#352c26;--navink:#c2cbdc;
+  --acc:#c2560f;--accbg:#fdf0e6;--acc2:#93400a;
+  --bad:#c0392b;--badbg:#fdecea;--warn:#b45309;--warnbg:#fff3df;--ok:#1f7a4d;--okbg:#e6f4ec;--info:#2557c7;--infobg:#e8effc;
+  --r:10px;color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:236px;flex-shrink:0;background:var(--nav);color:var(--navink);padding:20px 12px 30px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{color:#fff;font-weight:700;font-size:17px;padding:0 10px;line-height:1.4}
+.brand small{display:block;font-weight:400;font-size:12px;color:#8592ad;margin-top:4px}
+.group{margin:18px 10px 4px;font-size:11.5px;color:#7884a0;letter-spacing:1px}
+nav button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;color:var(--navink);padding:8px 10px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+nav button:hover{background:var(--nav2);color:#fff}
+nav button.on{background:var(--acc);color:#fff}
+nav button .k{font-size:11px;color:#7884a0}
+nav button.on .k{color:#ffe3cc}
+main{flex:1;min-width:0;padding:0 36px 90px}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px;font-size:13px;color:var(--ink2)}
+.top .sp{flex:1}
+.pill{display:inline-block;font-size:12px;padding:1px 9px;border-radius:20px;background:var(--accbg);color:var(--acc2);font-weight:600;white-space:nowrap}
+.pill.bad{background:var(--badbg);color:var(--bad)}.pill.warn{background:var(--warnbg);color:var(--warn)}.pill.ok{background:var(--okbg);color:var(--ok)}.pill.info{background:var(--infobg);color:var(--info)}.pill.grey{background:#eef1f5;color:var(--ink2)}
+section{display:none}section.on{display:block}
+h1{font-size:23px;margin:0 0 4px;line-height:1.35}
+.sub{color:var(--ink2);margin:0 0 18px}
+.jd{font-size:13px;color:var(--ink2);background:#fff;border:1px dashed #b9c3d1;border-radius:8px;padding:6px 12px;margin:-6px 0 18px}
+.jd b{color:var(--acc2)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;min-width:0}
+.card h3{margin:0 0 10px;font-size:16px}
+.card h3 small{font-weight:400;color:var(--ink3);font-size:12.5px;margin-left:6px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g2{display:grid;gap:16px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.kpi{background:#f7f9fb;border-radius:8px;padding:8px 10px}
+.kpi .l{font-size:12px;color:var(--ink3)}
+.kpi .v{font-size:21px;font-weight:700;line-height:1.3}
+.kpi .t{font-size:11.5px;color:var(--ink3)}
+.kpi.below .v{color:var(--bad)}
+.chan-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chan-h b{font-size:16px}
+.spark{display:block;width:100%;height:44px;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12.5px;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px}
+td{border-bottom:1px solid #eef1f5;padding:8px;vertical-align:top}
+tr:last-child td{border-bottom:0}
+.tw{overflow-x:auto}
+.bar{height:8px;border-radius:4px;background:#e8ecf1;overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.bar.red i{background:var(--bad)}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 6px;color:var(--ink2)}
+textarea,select{width:100%;font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+textarea{min-height:96px;resize:vertical}
+textarea:focus,select:focus{outline:2px solid #f3c29b;border-color:var(--acc)}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--acc2)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink2)}
+.chip.on,.chip:hover{border-color:var(--acc);color:var(--acc2);background:var(--accbg)}
+.res-h{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:10px;padding:6px 0;border-bottom:1px dashed #e5e9ef}
+.steps li:last-child{border-bottom:0}
+.steps .n{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accbg);color:var(--acc2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.steps li.done .n{background:var(--acc);color:#fff}
+.steps li.done span{color:var(--ink3);text-decoration:line-through}
+.reply{background:#f6faf9;border-left:3px solid var(--acc);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px;white-space:pre-wrap}
+.esc{border-radius:8px;padding:10px 12px;font-size:14px}
+.esc.yes{background:var(--badbg);color:#7d241a}
+.esc.no{background:var(--okbg);color:#1a5a3b}
+.esc.mid{background:var(--warnbg);color:#7a4206}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#f4f6f9;border-radius:8px;padding:10px 12px;white-space:pre-wrap}
+.empty{color:var(--ink3);font-size:14px;padding:30px 10px;text-align:center}
+.alert{display:flex;gap:12px;align-items:flex-start;background:var(--badbg);border:1px solid #f3c4bd;border-radius:var(--r);padding:12px 16px;margin-bottom:16px}
+.alert b{color:var(--bad)}
+.alert .ic{font-size:20px;line-height:1.2}
+.topic{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #eef1f5;cursor:pointer;border-radius:6px}
+.topic:hover,.topic.on{background:var(--accbg)}
+.topic .nm{flex:1;min-width:0}
+.topic .ct{width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.topic .ch{width:66px;text-align:right;font-size:13px;font-weight:700}
+.up{color:var(--bad)}.down{color:var(--ok)}
+.quote{background:#f7f9fb;border-radius:8px;padding:7px 10px;margin:6px 0;font-size:13.5px;color:var(--ink2)}
+.chat{display:flex;flex-direction:column;gap:8px}
+.msg{max-width:88%;padding:8px 12px;border-radius:10px;font-size:14px;position:relative}
+.msg.p{background:#eef1f5;align-self:flex-start}
+.msg.a{background:var(--accbg);align-self:flex-end}
+.msg .who{display:block;font-size:11.5px;color:var(--ink3)}
+.msg.flag{outline:2px solid var(--bad)}
+.msg .fl{display:block;margin-top:4px;font-size:12px;color:var(--bad);font-weight:600}
+.score{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed #e5e9ef;font-size:14px}
+.score:last-child{border-bottom:0}
+.score .nm{flex:1}
+.flow{display:flex;flex-direction:column;gap:6px}
+.fnode{display:grid;grid-template-columns:120px minmax(0,1fr) 64px;align-items:center;gap:10px;font-size:14px}
+.fnode .bar{height:14px}
+.fnode .num{text-align:right;font-variant-numeric:tabular-nums}
+.kan{display:grid;grid-template-columns:repeat(5,minmax(180px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:#e9edf2;border-radius:var(--r);padding:10px}
+.col h4{margin:0 0 8px;font-size:13.5px;display:flex;justify-content:space-between}
+.kc{background:#fff;border-radius:8px;padding:10px;margin-bottom:8px;font-size:13.5px;border:1px solid var(--line)}
+.kc b{display:block;font-size:14px;margin-bottom:4px}
+.kc .src{font-size:12px;color:var(--ink3)}
+.kc .eff{margin-top:6px;font-size:12.5px;background:var(--okbg);color:#1a5a3b;border-radius:6px;padding:3px 7px}
+.map td:first-child{font-weight:600;white-space:nowrap}
+.note{font-size:12.5px;color:var(--ink3);margin-top:8px}
+.foot{margin-top:28px;font-size:12.5px;color:var(--ink3);border-top:1px solid var(--line);padding-top:12px}
+.hero{background:var(--nav);color:#e6ebf4;border-radius:var(--r);padding:22px 24px;margin-bottom:16px}
+.hero h1{color:#fff}
+.hero p{color:#c4cde0;margin:6px 0 0}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom, 0px));transform:translate(-50%,20px);background:var(--nav);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:900px){.g2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){
+  .app{flex-direction:column}
+  nav{width:100%;height:auto;position:sticky;top:0;z-index:10;padding:10px 12px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+  nav .brand,nav .group{display:none}
+  nav button{width:auto;flex-shrink:0}
+  nav button .k{display:none}
+  main{padding:0 16px 80px}
+  .top{position:static}
+}
+@media (max-width:640px){
+  h1{font-size:20px}
+  .card{padding:14px 14px}
+  .kpi .v{font-size:18px}
+  table.cards thead{display:none}
+  table.cards,table.cards tbody,table.cards tr,table.cards td{display:block;width:100%}
+  table.cards tr{display:flex!important;flex-wrap:wrap;gap:2px 14px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:8px;background:#fff}
+  table.cards td{border:0;padding:2px 0;width:auto!important;flex:0 1 auto;max-width:100%}
+  table.cards td:first-child{flex-basis:100%;font-weight:700}
+  table.cards td::before{content:attr(data-label);display:inline;font-size:12px;color:var(--ink3);margin-right:6px}
+  table.cards td:first-child::before{display:none}
+  table.cards.long td{flex-basis:100%}
+  table.cards.long td::before{display:block}
+  #fcrBody td:nth-child(4){flex:1 1 140px}
+  #fcrBody td:nth-child(4)::before{display:none}
+  table.cards td[data-label=""]::before{display:none}
+  .fnode{grid-template-columns:96px minmax(0,1fr) 52px;font-size:13px}
+  .kan{grid-template-columns:minmax(0,1fr);overflow:visible}
+  .msg{max-width:95%}
+}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<nav id="nav">
+  <div class="brand">轻医美连锁 AI 经营系统<small>AI 产品经理（企业经营系统）· 面试演示原型</small></div>
+  <div class="group">总览</div>
+  <button data-tab="home" class="on">演示说明<span class="k">首页</span></button>
+  <button data-tab="map">AI 应用场景地图<span class="k">交付 1</span></button>
+  <div class="group">知识与应用</div>
+  <button data-tab="kb">企业知识库 V1.0<span class="k">交付 2</span></button>
+  <button data-tab="apps">3 个高价值应用<span class="k">交付 3</span></button>
+  <button data-tab="flow">数字化工作流<span class="k">交付 4</span></button>
+  <div class="group">经营与治理</div>
+  <button data-tab="dash">经营看板与预警<span class="k">职责 4</span></button>
+  <button data-tab="eval">效果评价与风险规范<span class="k">交付 5·6</span></button>
+</nav>
+<main>
+  <div class="top"><span class="pill grey">示例：某轻医美连锁，8 家门店（虚构）</span><span class="pill grey">数据周期：近 30 天</span><span class="sp"></span><span>演示原型 · 全部为模拟数据</span></div>
+
+  <section id="home" class="on">
+    <div class="hero">
+      <h1>轻医美连锁 AI 经营系统</h1>
+      <p>按岗位“入职 3–6 个月交付成果”拆成 6 个模块：先画场景地图、定优先级，再建知识库打底，上线 3 个高价值应用，把门店流程搬进系统，最后用效果评价和风险规范管住质量和合规。</p>
+      <div class="btns"><button class="btn" onclick="go('kb')">先看知识库问答（含合规拦截）</button><button class="btn ghost" onclick="go('map')">从场景地图开始</button></div>
+    </div>
+    <div class="card">
+      <h3>岗位交付成果 × 演示模块</h3>
+      <div class="tw"><table class="cards long"><thead><tr><th>交付成果</th><th>演示模块</th><th>能看到什么</th></tr></thead><tbody id="mapBody"></tbody></table></div>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>推荐演示顺序（约 8 分钟）</h3>
+        <ol style="margin:0;padding-left:20px">
+          <li>场景地图：哪些问题该用 AI，哪些用流程或系统就够了。</li>
+          <li>知识库问答：同一个问题，咨询师和前台看到的不一样；医疗判断直接转医生。</li>
+          <li>术后回访：自动生成回访任务，发出前过一遍医疗广告合规检查。</li>
+          <li>经营看板：回访完成率低的门店，复购率也低。</li>
+          <li>效果评价：每个 AI 应用上线后看什么数。</li>
+        </ol>
+      </div>
+      <div class="card"><h3>说明</h3>
+        <ul style="margin:0;padding-left:20px">
+          <li>这是我针对岗位自己设计的<b>功能原型</b>，没有在任何企业使用过。</li>
+          <li>门店、顾客、项目、数字均为<b>模拟</b>；护理与话术内容仅为演示，实际以医务部审定为准。</li>
+          <li>问答与识别在原型里用规则模拟；实际落地接大模型 + 企业知识库（RAG），在低代码 / 智能体平台上配置。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="map">
+    <h1>AI 应用场景地图</h1>
+    <p class="sub">先判断“这个问题该用流程、数据、系统还是 AI 解决”，再按价值和落地难度排优先级。点任一场景看判断依据。</p>
+    <div class="jd"><b>对应职责：</b>识别高频、重复、信息密集和依赖个人经验的工作；判断问题应通过流程、数据、系统还是 AI 解决；规划场景和实施优先级。</div>
+    <div class="g2">
+      <div class="card"><h3>场景清单<small>按优先级排序</small></h3><div id="sceneList"></div></div>
+      <div class="card"><h3 id="scTitle">判断依据</h3><div id="scBody"></div></div>
+    </div>
+  </section>
+
+  <section id="kb">
+    <h1>企业知识库 V1.0</h1>
+    <p class="sub">员工用自然语言提问，回答必须带出处；按岗位控制能看到什么；医疗判断不让 AI 回答。</p>
+    <div class="jd"><b>对应职责 3：</b>梳理产品、门店、用户和组织知识；建立分类、更新和权限机制；设计知识检索和员工问答；确保持续更新。</div>
+    <div class="g2">
+      <div class="card">
+        <h3>员工问答</h3>
+        <label style="margin-top:0">提问人岗位</label>
+        <div class="chips" id="roleChips"></div>
+        <label>常见问题</label>
+        <div class="chips" id="qChips"></div>
+        <label for="qin">问题（可修改或自己输入）</label>
+        <textarea id="qin" style="min-height:70px" placeholder="例如：水光针做完多久可以化妆？"></textarea>
+        <div class="btns"><button class="btn" id="askBtn">提问</button></div>
+      </div>
+      <div class="card" id="ansCard"><h3>回答</h3><div id="ans"><div class="empty">选一个问题，点“提问”。可以切换岗位看权限差别。</div></div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><h3>知识分类与维护机制</h3><div class="tw"><table class="cards"><thead><tr><th>知识类别</th><th>负责人</th><th>更新节奏</th><th>可见范围</th></tr></thead><tbody id="kbBody"></tbody></table></div></div>
+      <div class="card"><h3>本周知识缺口<small>答不上来的问题自动进这里</small></h3><div id="gapList"></div><p class="note">缺口按负责人自动派单，补完后重新上架。这是知识库“持续更新、不是一次性项目”的抓手。</p></div>
+    </div>
+  </section>
+
+  <section id="apps">
+    <h1>3 个高价值应用</h1>
+    <p class="sub">从场景地图里挑出“高频 + 有数据 + 能量化效果”的前三个先做。</p>
+    <div class="jd"><b>对应交付：</b>至少 3 个高价值 AI 或自动化应用；与私域、运营、组织人力负责人共建。</div>
+    <div class="chips" id="appTabs" style="margin-bottom:14px"></div>
+    <div id="appA">
+      <div class="g2">
+        <div class="card"><h3>今日回访任务<small>按术后天数自动生成</small></h3><div class="tw"><table class="cards"><thead><tr><th>顾客</th><th>项目</th><th>节点</th><th>标签</th><th></th></tr></thead><tbody id="fuBody"></tbody></table></div></div>
+        <div class="card"><h3>回访消息 + 合规检查</h3>
+          <div id="fuWho" class="note" style="margin-top:0">选左侧一位顾客，生成回访消息。也可以直接改写下面的文字再检查。</div>
+          <textarea id="fuText" style="min-height:150px"></textarea>
+          <div class="btns"><button class="btn" id="ckBtn">医疗广告合规检查</button><button class="btn ghost sm" id="badBtn">填入一段违规示例</button></div>
+          <div id="ckOut" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+    <div id="appB" hidden>
+      <div class="card"><h3>门店巡检 → 自动整改<small>店长手机拍照提交，AI 对照巡检标准识别问题</small></h3>
+        <div class="tw"><table class="cards"><thead><tr><th>门店</th><th>巡检项</th><th>AI 识别结果</th><th>自动生成的整改任务</th><th>状态</th></tr></thead><tbody id="insBody"></tbody></table></div>
+        <p class="note">原型说明：照片识别为模拟结果。上线前要先用历史巡检照片抽检准确率，低于标准的项保留人工判断。</p>
+      </div>
+    </div>
+    <div id="appC" hidden>
+      <div class="g2">
+        <div class="card"><h3>新员工培训：SOP 自动出题</h3>
+          <label style="margin-top:0">选择 SOP</label><select id="sopSel"></select>
+          <div id="quiz" style="margin-top:10px"></div>
+        </div>
+        <div class="card"><h3>入职培训进度<small>本月新员工 6 人</small></h3><div id="trainList"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow">
+    <h1>数字化工作流：顾客客诉处理</h1>
+    <p class="sub">把原来靠微信群转发、Excel 汇总、人工催办的流程，改成表单 → 自动分派 → 提醒 → 升级 → 数据回流。</p>
+    <div class="jd"><b>对应职责 4：</b>梳理跨部门流程；设计表单、审批、任务、提醒和数据流转；减少人工传递、重复录入和低效协调。</div>
+    <div class="g2">
+      <div class="card"><h3>现在（改之前）</h3><ul class="steps" id="beforeSteps"></ul><p class="note" style="color:var(--bad)">人工传递 5 次，同一信息录入 3 遍，平均 2.6 天闭环。</p></div>
+      <div class="card"><h3>改之后</h3><ul class="steps" id="afterSteps"></ul><p class="note" style="color:var(--ok)">人工传递 1 次，信息录入 1 遍，目标 1 天内闭环（上线后用看板验证）。</p></div>
+    </div>
+    <div class="card"><h3>表单与规则配置<small>低代码平台里配置，不用开发</small></h3><div class="tw"><table class="cards long"><thead><tr><th>节点</th><th>字段 / 规则</th><th>负责人</th><th>超时处理</th></tr></thead><tbody id="cfgBody"></tbody></table></div></div>
+  </section>
+
+  <section id="dash">
+    <h1>经营看板与预警</h1>
+    <p class="sub">8 家门店的核心经营指标，红色为低于目标。预警自动推给店长和区域负责人。</p>
+    <div class="jd"><b>对应职责 4：</b>建设经营数据看板和预警机制。</div>
+    <div id="alerts"></div>
+    <div class="card"><h3>门店指标<small>近 30 天</small></h3><div class="tw"><table class="cards"><thead><tr><th>门店</th><th>到店人次</th><th>成交率</th><th>客单价</th><th>90 天复购率</th><th>回访完成率</th><th>客诉</th></tr></thead><tbody id="stBody"></tbody></table></div>
+      <p class="note">看得出的规律：回访完成率低的门店，复购率也低。这就是“术后回访”被排进前三个应用的原因。</p></div>
+  </section>
+
+  <section id="eval">
+    <h1>AI 效果评价与风险规范</h1>
+    <p class="sub">每个 AI 应用上线后看四层数：有没有人用、用得准不准、省了多少时间、业务结果有没有变。</p>
+    <div class="jd"><b>对应交付：</b>AI 应用效果评价机制；AI 使用和风险管理规范（幻觉、隐私、权限、医疗合规）。</div>
+    <div class="card"><h3>效果评价表<small>上线第 4 周（模拟）</small></h3><div class="tw"><table class="cards"><thead><tr><th>应用</th><th>使用率</th><th>准确率（抽检）</th><th>节省时间</th><th>业务结果</th><th>结论</th></tr></thead><tbody id="evBody"></tbody></table></div></div>
+    <div class="grid" id="riskCards"></div>
+  </section>
+
+  <div class="foot">演示原型：根据公开岗位描述自行设计，与任何公司无关；示例门店、顾客与全部数据均为虚构；护理内容仅为演示，不构成医疗建议。</div>
+</main>
+</div>
+<div id="toast"></div>
+<script>
+const $ = (s, r=document) => r.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.h); toast.h=setTimeout(()=>el.classList.remove('on'),1800); }
+function go(tab){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on', s.id===tab));
+  window.scrollTo({top:0});
+  const nb=document.querySelector(`nav button[data-tab="${tab}"]`); if(nb && innerWidth<860) nb.scrollIntoView({inline:'center',block:'nearest'});
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function rows(el, heads, data){ el.innerHTML = data.map(r=>'<tr>'+r.map((c,i)=>`<td data-label="${heads[i]||''}">${c}</td>`).join('')+'</tr>').join(''); }
+function scrollIfNarrow(el){ if(innerWidth<900) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+rows($('#mapBody'), ['交付成果','演示模块','能看到什么'], [
+ ['AI 应用场景地图','AI 应用场景地图','10 个场景按“流程 / 数据 / 系统 / AI”分类，标出价值、难度和优先级'],
+ ['企业知识库 V1.0','企业知识库','带出处的员工问答、按岗位的权限控制、医疗判断拦截、知识缺口自动派单'],
+ ['至少 3 个高价值应用','3 个高价值应用','术后回访与复购触达（含合规检查）、门店巡检自动整改、SOP 自动出题培训'],
+ ['数字化工作流','数字化工作流','客诉处理：改前改后对比、表单与超时规则配置'],
+ ['AI 效果评价机制','效果评价与风险规范','使用率、准确率、节省时间、业务结果四层评价'],
+ ['AI 使用和风险规范','效果评价与风险规范','幻觉、隐私、权限、医疗合规四类规则'],
+]);
+
+/* 场景地图 */
+const SC = [
+ {n:'术后回访与复购触达', d:'私域', how:'AI + 系统', v:'高', e:'中', p:'P0', why:'每天几十条回访靠咨询师记忆，漏访多；消息内容高度重复，适合 AI 起草。回访完成率和复购率都能直接量化。', not:'发送前必须过合规检查；涉及不良反应的回复转医生。'},
+ {n:'员工知识问答', d:'组织 / 门店', how:'AI（知识库）', v:'高', e:'中', p:'P0', why:'新咨询师大量重复问项目、术后护理、价格政策，老员工被反复打断。资料散在微信群和文件夹里。', not:'答案必须带出处；医疗判断、个体禁忌不让 AI 回答。'},
+ {n:'门店巡检整改', d:'运营', how:'系统 + AI', v:'高', e:'中', p:'P0', why:'巡检靠拍照发群、区域经理人工看图记问题，整改无人追。先上系统化表单和自动催办，再用 AI 识别照片。', not:'识别准确率不达标的项保留人工判断。'},
+ {n:'客诉处理流程', d:'门店 / 医务', how:'流程 + 系统', v:'高', e:'低', p:'P1', why:'问题出在流转靠人传话，不需要 AI。先用表单和规则把分派、超时升级固定下来。', not:'—'},
+ {n:'新员工 SOP 培训考核', d:'组织人力', how:'AI', v:'中', e:'低', p:'P1', why:'SOP 写好了但没人考，AI 按 SOP 自动出题，店长看通过率。', not:'题目由培训负责人抽查后再发布。'},
+ {n:'经营数据周报', d:'管理层', how:'数据 + 系统', v:'中', e:'中', p:'P1', why:'各店每周手工填 Excel 汇总，口径不一。先统一指标口径、接系统数据，AI 只负责写摘要。', not:'口径与财务确认后再上线。'},
+ {n:'顾客标签自动打标', d:'私域', how:'AI + 数据', v:'中', e:'中', p:'P2', why:'从咨询记录里提取顾客关注点（价格敏感、怕痛、关注恢复期），给触达分群用。', not:'只用顾客授权的数据；敏感信息脱敏。'},
+ {n:'招聘简历初筛', d:'组织人力', how:'AI', v:'中', e:'低', p:'P2', why:'门店岗位招聘量大，初筛规则清楚。', not:'只做排序建议，最终由 HR 判断，避免歧视性规则。'},
+ {n:'面诊方案推荐', d:'医务', how:'暂不做', v:'—', e:'高', p:'暂缓', why:'涉及诊疗判断，责任和合规风险高，现阶段不适合交给 AI。', not:'可以做医生端的资料检索，不做给顾客的方案推荐。'},
+ {n:'排班', d:'门店', how:'流程', v:'低', e:'低', p:'暂缓', why:'门店规模小，排班靠店长经验足够，加 AI 收益不明显。', not:'—'},
+];
+const PCLS = {P0:'bad',P1:'warn',P2:'info','暂缓':'grey'};
+$('#sceneList').innerHTML = SC.map((s,i)=>`<div class="topic" data-i="${i}"><span class="pill ${PCLS[s.p]}" style="width:44px;text-align:center">${s.p}</span><span class="nm">${s.n}<div class="note" style="margin:0">${s.d}</div></span><span class="pill grey">${s.how}</span></div>`).join('');
+function scene(i){
+  document.querySelectorAll('#sceneList .topic').forEach(x=>x.classList.toggle('on', +x.dataset.i===i));
+  const s=SC[i]; $('#scTitle').textContent=s.n;
+  $('#scBody').innerHTML = `<div class="res-h"><span class="pill ${PCLS[s.p]}">优先级 ${s.p}</span><span class="pill info">解决方式：${s.how}</span><span class="pill grey">价值 ${s.v}</span><span class="pill grey">落地难度 ${s.e}</span></div>
+  <label style="margin-top:0">为什么这么判断</label><div class="reply">${esc(s.why)}</div>
+  <label>边界与风险</label><div class="esc mid">${esc(s.not)}</div>`;
+}
+document.querySelectorAll('#sceneList .topic').forEach(x=>x.onclick=()=>{scene(+x.dataset.i); scrollIfNarrow($('#scTitle'));});
+scene(0);
+
+/* 知识库 */
+const ROLES = ['咨询师','前台','店长'];
+let role='咨询师';
+$('#roleChips').innerHTML = ROLES.map(r=>`<button class="chip ${r===role?'on':''}" data-r="${r}">${r}</button>`).join('');
+document.querySelectorAll('#roleChips .chip').forEach(b=>b.onclick=()=>{ role=b.dataset.r; document.querySelectorAll('#roleChips .chip').forEach(x=>x.classList.toggle('on',x===b)); if($('#qin').value.trim()) ask(); });
+const QA = [
+ {tag:'术后护理', q:'水光针做完多久可以化妆？', kw:/水光|化妆|术后护理/, type:'ok',
+  a:'按门店护理 SOP：注射后 24 小时内针眼处保持清洁干燥，不建议化妆；之后可以正常淡妆。一周内避免桑拿、高温和剧烈运动。如果出现持续红肿、硬结，请联系驻店医生。',
+  src:'《水光类项目术后护理 SOP》v2.3 · 第 3 条', owner:'医务部', upd:'2026-10-12'},
+ {tag:'禁忌判断', q:'顾客说自己在备孕，能做肉毒吗？', kw:/备孕|怀孕|孕期|哺乳|禁忌|病史|过敏史|吃药/, type:'med'},
+ {tag:'成本价', q:'热玛吉现在门店成本价是多少？', kw:/成本|进价|毛利/, type:'perm', allow:['店长'],
+  a:'热玛吉单次门店结算成本 ¥XXXX（演示隐藏），本月起执行新采购价。', src:'《项目成本与价格政策》2026-Q4 · 仅店长及以上可见', owner:'财务部', upd:'2026-10-01'},
+ {tag:'入职培训', q:'新员工入职第一周要完成哪些培训？', kw:/入职|新员工|培训/, type:'ok',
+  a:'第一周 4 项：① 院感与消毒规范（必须考试通过）；② 前台接待与预约系统操作；③ 主推项目基础知识（光电、水光、注射三类）；④ 医疗广告合规话术。每项完成后在系统里考核，通过率由店长查看。',
+  src:'《新员工入职培训 SOP》v1.4 · 第一章', owner:'组织人力部', upd:'2026-09-20'},
+ {tag:'客诉处理', q:'顾客投诉术后红肿怎么处理？', kw:/红肿|投诉|客诉|过敏|不良反应/, type:'ok', med:true,
+  a:'① 先安抚，请顾客发送照片并记录时间、项目、操作人；② 立即通知驻店医生判断，<b>前台和咨询师不对病情下结论</b>；③ 在系统提交客诉单，等级按医生判断填写；④ 24 小时内回访。',
+  src:'《客诉分级与处理 SOP》v1.1 · 医疗相关客诉', owner:'医务部 + 运营部', upd:'2026-08-30'},
+];
+$('#qChips').innerHTML = QA.map((x,i)=>`<button class="chip" data-i="${i}">${x.tag}</button>`).join('');
+document.querySelectorAll('#qChips .chip').forEach(b=>b.onclick=()=>{ document.querySelectorAll('#qChips .chip').forEach(x=>x.classList.toggle('on',x===b)); $('#qin').value=QA[b.dataset.i].q; ask(); });
+function ask(){
+  const t=$('#qin').value.trim(); if(!t){ toast('先输入问题'); return; }
+  const order=[2,1,4,0,3];
+  const hit=order.map(i=>QA[i]).find(x=>x.kw.test(t));
+  let h='';
+  if(!hit){
+    h=`<div class="res-h"><span class="pill grey">知识库未找到依据</span></div><div class="esc mid">没有找到可引用的制度或 SOP，AI 不自行编造答案。这个问题已记入“知识缺口”，派给对应负责人补充。</div>`;
+  } else if(hit.type==='med'){
+    h=`<div class="res-h"><span class="pill bad">医疗判断 · AI 不作答</span><span class="pill grey">提问人：${role}</span></div>
+     <div class="esc yes"><b>已转驻店医生</b><br>备孕、孕期、哺乳期、既往病史等个体禁忌属于医疗判断，必须由医生面诊评估。知识库只提供沟通话术。</div>
+     <label>可以对顾客说</label><div class="reply">“这个问题需要医生结合您的具体情况来评估，我现在帮您约驻店医生面诊，医生会和您详细沟通。”</div>
+     <p class="note">规则来源：《AI 使用与风险管理规范》医疗合规第 1 条。此类提问会单独记录，供医务部抽查。</p>`;
+  } else if(hit.type==='perm' && !hit.allow.includes(role)){
+    h=`<div class="res-h"><span class="pill warn">权限不足</span><span class="pill grey">提问人：${role}</span></div>
+     <div class="esc mid">该内容属于“价格与成本”类知识，仅店长及以上可见。如需对顾客报价，请使用《门店对外价目表》。</div>
+     <p class="note">切换到“店长”再问一次，可以看到差别。</p>`;
+  } else {
+    h=`<div class="res-h"><span class="pill ok">有出处</span><span class="pill grey">提问人：${role}</span>${hit.med?'<span class="pill bad">医疗相关 · 需医生介入</span>':''}</div>
+     <div class="reply">${hit.a}</div>
+     <label>出处</label><div class="mono">${esc(hit.src)}\n负责人：${esc(hit.owner)} · 最近更新：${esc(hit.upd)}</div>
+     <div class="btns"><button class="btn ghost sm" onclick="toast('已反馈：回答有误，推送给负责人复核')">回答有误</button><button class="btn ghost sm" onclick="toast('已记录：有帮助')">有帮助</button></div>`;
+  }
+  $('#ans').innerHTML=h; scrollIfNarrow($('#ansCard'));
+}
+$('#askBtn').onclick=ask;
+rows($('#kbBody'), ['知识类别','负责人','更新节奏','可见范围'], [
+ ['项目与产品知识（适应症、流程、术后护理）','医务部 / 产品经理','新项目上线前；每季度复核','全员'],
+ ['价格与成本政策','财务部','价格调整当天','对外价目：全员；成本：店长及以上'],
+ ['门店运营 SOP（接待、消毒、巡检）','运营部','流程变更当天','门店全员'],
+ ['客诉与案例库','运营部 + 医务部','每周例会后','咨询师、店长、医务'],
+ ['组织制度（入职、薪酬、考勤）','组织人力部','制度变更当天','全员；薪酬细则：本人与 HR'],
+ ['医疗广告合规话术','品牌部 + 法务','法规更新时；每半年复核','全员'],
+]);
+const GAP = [['光子嫩肤和超光子有什么区别？','产品知识','医务部',7],['会员卡转让给家人怎么办理？','门店运营','运营部',5],['术后多久可以喝酒？','术后护理','医务部',4],['试用期社保从哪天开始交？','组织制度','组织人力部',3]];
+$('#gapList').innerHTML = GAP.map(([q,c,o,n])=>`<div class="topic" style="cursor:default"><span class="nm">${esc(q)}<div class="note" style="margin:0">${c} · 已派给 ${o}</div></span><span class="pill warn">${n} 次</span></div>`).join('');
+
+/* 三个应用 */
+const APPS=[['appA','术后回访与复购触达'],['appB','门店巡检自动整改'],['appC','SOP 自动出题培训']];
+$('#appTabs').innerHTML = APPS.map(([id,n],i)=>`<button class="chip ${i?'':'on'}" data-id="${id}">${i+1}. ${n}</button>`).join('');
+document.querySelectorAll('#appTabs .chip').forEach(b=>b.onclick=()=>{ document.querySelectorAll('#appTabs .chip').forEach(x=>x.classList.toggle('on',x===b)); APPS.forEach(([id])=>$('#'+id).hidden = id!==b.dataset.id); });
+const FU = [
+ ['王女士','水光补水','术后第 1 天','怕痛 · 第一次做', '王女士您好，我是您的咨询师小林。昨天做完水光，今天感觉怎么样？针眼处 24 小时内保持清洁干燥，今晚还不建议化妆哦。如果有持续红肿或不舒服，随时发照片给我，我马上请医生帮您看。'],
+ ['陈女士','光子嫩肤','术后第 7 天','老顾客 · 价格敏感', '陈女士您好，光子做完一周了，皮肤状态还满意吗？这段时间记得做好防晒。按您的皮肤情况，医生建议的疗程间隔是 3–4 周，需要的话我提前帮您留个时间。'],
+ ['刘先生','皮秒','术后第 30 天','关注恢复期', '刘先生您好，皮秒做完一个月了，色沉恢复得怎么样？方便的话发一张近照，我请医生帮您评估下一次的安排。'],
+];
+rows($('#fuBody'), ['顾客','项目','节点','标签',''], FU.map((f,i)=>[f[0],f[1],`<span class="pill ${i===0?'warn':'grey'}">${f[2]}</span>`,`<span class="note">${f[3]}</span>`,`<button class="btn ghost sm" onclick="pickFu(${i})">生成消息</button>`]));
+function pickFu(i){ const f=FU[i]; $('#fuWho').textContent=`${f[0]} · ${f[1]} · ${f[2]}（标签：${f[3]}）`; $('#fuText').value=f[4]; $('#ckOut').innerHTML=''; scrollIfNarrow($('#fuText')); }
+const BAN = [
+ [/保证|确保有效|一定有效/g,'承诺疗效','改为“多数顾客反馈…，效果因人而异”'],
+ [/无副作用|零风险|没有任何风险|绝对安全/g,'声称无风险','改为“可能出现短暂红肿等反应，请遵医嘱护理”'],
+ [/100%|百分百/g,'绝对化用语','删除，或改为客观描述'],
+ [/根治|永久/g,'夸大疗效','改为“改善”'],
+ [/最好的|第一|顶级/g,'最高级用语','删除'],
+ [/前后对比|对比图/g,'使用前后对比','医疗广告不得使用诊疗前后对比，删除'],
+];
+$('#badBtn').onclick=()=>{ $('#fuText').value='王女士您好！我们的水光针效果100%保证，无副作用，做一次就能根治暗沉。这是其他顾客的前后对比图，现在续卡是全城最好的价格！'; $('#ckOut').innerHTML=''; };
+$('#ckBtn').onclick=()=>{
+  const t=$('#fuText').value; if(!t.trim()){ toast('先生成或输入一段消息'); return; }
+  const hits=[]; let marked=esc(t);
+  BAN.forEach(([re,k,fix])=>{ const m=t.match(re); if(m){ hits.push([ [...new Set(m)].join('、'),k,fix]); marked=marked.replace(new RegExp(re.source,'g'), x=>`<mark style="background:#fbd5cf">${x}</mark>`);} });
+  $('#ckOut').innerHTML = hits.length
+   ? `<div class="esc yes"><b>发现 ${hits.length} 类问题，禁止发送</b></div><div class="reply" style="margin-top:8px">${marked}</div><div class="tw" style="margin-top:8px"><table class="cards"><thead><tr><th>命中词</th><th>问题</th><th>修改建议</th></tr></thead><tbody>${hits.map(h=>`<tr><td data-label="命中词">${esc(h[0])}</td><td data-label="问题">${h[1]}</td><td data-label="修改建议">${h[2]}</td></tr>`).join('')}</tbody></table></div>`
+   : `<div class="esc no"><b>未发现违规表述，可以发送</b><br>发送后自动记入回访记录，回访完成率实时更新到经营看板。</div>`;
+};
+rows($('#insBody'), ['门店','巡检项','AI 识别结果','自动生成的整改任务','状态'], [
+ ['春熙店','治疗室消毒记录','<span class="pill bad">记录表 3 天未签字</span>','店长补签并说明原因 · 今天 18:00 前','<span class="pill warn">待整改</span>'],
+ ['高新店','耗材摆放','<span class="pill bad">开封耗材未标注日期</span>','护士长标注并复拍 · 明天 12:00 前','<span class="pill warn">待整改</span>'],
+ ['万象城店','前台物料','<span class="pill ok">符合标准</span>','—','<span class="pill ok">通过</span>'],
+ ['双流店','医疗广告物料','<span class="pill bad">海报含“零风险”字样</span>','撤下海报，换用审定版本 · 今天内','<span class="pill bad">已超时，升级区域经理</span>'],
+]);
+const SOP = {
+ '院感与消毒规范':[['治疗室消毒记录需要谁签字？',['当班护士','前台','保洁'],0],['开封后的耗材必须标注什么？',['开封日期和时间','顾客姓名','价格'],0],['发现消毒记录缺失，第一步做什么？',['立即上报店长并补做消毒','等下次巡检再说','自己补签'],0]],
+ '医疗广告合规话术':[['下面哪句可以对顾客说？',['效果因人而异，医生会根据您的情况评估','保证无副作用','做一次永久有效'],0],['可以给顾客发其他顾客的术前术后对比图吗？',['不可以','可以，打码就行','老顾客可以'],0],['顾客问“会不会留疤”，正确做法是？',['请医生面诊评估并说明可能的风险','直接说不会','说别人都没事'],0]],
+};
+$('#sopSel').innerHTML = Object.keys(SOP).map(k=>`<option>${k}</option>`).join('');
+function quiz(){ const qs=SOP[$('#sopSel').value]; $('#quiz').innerHTML = qs.map(([q,opts,ans],i)=>`<div class="card" style="margin:0 0 10px;padding:12px 14px"><b>${i+1}. ${esc(q)}</b><div class="chips" style="margin-top:6px">${opts.map((o,j)=>`<button class="chip" data-ok="${j===ans}">${esc(o)}</button>`).join('')}</div></div>`).join('') + '<p class="note">题目由 AI 按 SOP 生成，培训负责人抽查后发布。</p>';
+  document.querySelectorAll('#quiz .chip').forEach(b=>b.onclick=()=>{ b.style.borderColor = b.dataset.ok==='true' ? 'var(--ok)' : 'var(--bad)'; b.style.color = b.dataset.ok==='true' ? 'var(--ok)' : 'var(--bad)'; toast(b.dataset.ok==='true'?'回答正确':'回答错误，已记入错题'); }); }
+$('#sopSel').onchange=quiz; quiz();
+$('#trainList').innerHTML = [['小周','春熙店',4,4],['小李','高新店',3,4],['小何','双流店',2,4],['小吴','温江店',4,4],['小郑','万象城店',1,4],['小杨','春熙店',3,4]].map(([n,s,d,t])=>`<div class="score"><span class="nm">${n}<div class="note" style="margin:0">${s}</div></span><div class="bar ${d<2?'red':''}" style="width:110px"><i style="width:${d/t*100}%"></i></div><b style="width:40px;text-align:right">${d}/${t}</b></div>`).join('');
+
+/* 工作流 */
+const steps=(arr)=>arr.map((s,i)=>`<li><span class="n">${i+1}</span><span>${s}</span></li>`).join('');
+$('#beforeSteps').innerHTML = steps(['前台在门店微信群发文字描述客诉','店长看到后私聊医生，转述一遍','医生判断后口头告诉店长，店长再告诉咨询师回访','运营每周从群聊里翻出客诉，手工填 Excel','区域经理月底看 Excel，很多已经过了处理时机']);
+$('#afterSteps').innerHTML = steps(['前台扫码填客诉表单（顾客、项目、照片、诉求）','系统按“是否医疗相关”自动派给驻店医生或店长','医生在手机上填判断和等级，自动生成 24 小时回访任务','超时未处理自动提醒，再超时升级区域经理','处理结果自动进经营看板，不用人工汇总']);
+rows($('#cfgBody'), ['节点','字段 / 规则','负责人','超时处理'], [
+ ['提交','顾客、项目、操作人、照片、诉求类型（必填）','前台 / 咨询师','—'],
+ ['分派','诉求类型含“红肿 / 疼痛 / 过敏” → 医疗相关','系统自动','—'],
+ ['医生判断','等级 A / B / C、处理建议','驻店医生','2 小时未处理 → 提醒；4 小时 → 升级医务主管'],
+ ['回访','按等级生成回访任务（A 级 24h 内）','咨询师','超时 → 提醒店长'],
+ ['结案','顾客满意度、是否退款','店长','7 天未结案 → 升级区域经理'],
+]);
+
+/* 看板 */
+const ST = [
+ ['春熙店',612,38.2,1860,31.5,61,4],['高新店',548,33.1,2140,36.8,82,2],['万象城店',705,41.6,2380,44.2,93,1],['双流店',326,35.4,1520,29.1,58,3],
+ ['温江店',298,39.8,1610,40.6,88,0],['天府店',452,40.9,2210,42.0,91,1],['龙湖店',388,36.7,1980,38.3,86,1],['金牛店',341,37.5,1700,39.9,90,0],
+];
+const T = {cr:36, rep:38, fu:85, cp:2};
+rows($('#stBody'), ['门店','到店人次','成交率','客单价','90 天复购率','回访完成率','客诉'], ST.map(([n,v,cr,au,rep,fu,cp])=>[
+ n, v, `<span style="${cr<T.cr?'color:var(--bad);font-weight:700':''}">${cr}%</span>`, '¥'+au.toLocaleString(),
+ `<span style="${rep<T.rep?'color:var(--bad);font-weight:700':''}">${rep}%</span>`,
+ `<span style="${fu<T.fu?'color:var(--bad);font-weight:700':''}">${fu}%</span>`,
+ `<span style="${cp>T.cp?'color:var(--bad);font-weight:700':''}">${cp}</span>`]));
+$('#alerts').innerHTML = [
+ ['春熙店','回访完成率 61%（目标 ≥ 85%），90 天复购率 31.5%，客诉 4 起。','已推送店长；建议本周优先启用“术后回访”应用。'],
+ ['双流店','回访完成率 58%，复购率 29.1%，均为全区最低。','已推送区域经理，下周巡店重点跟进。'],
+ ['高新店','成交率连续 2 周下降（36.0% → 33.1%）。','建议抽查咨询录音，看是否集中在某个项目。'],
+].map(([s,a,b])=>`<div class="alert"><span class="ic">⚠</span><div><b>${s}：</b>${a}<div class="note" style="margin:2px 0 0;color:var(--ink2)">${b}</div></div></div>`).join('');
+
+/* 评价 + 风险 */
+rows($('#evBody'), ['应用','使用率','准确率（抽检）','节省时间','业务结果','结论'], [
+ ['员工知识问答','咨询师周活 86%','92%（抽 100 条）','每人每天约 25 分钟','新人独立接待时间 14 天 → 9 天','<span class="pill ok">扩大到全部门店</span>'],
+ ['术后回访与复购','回访任务完成率 61% → 89%','合规检查拦截 37 条','每人每天约 30 分钟','90 天复购率 +4.2 个百分点','<span class="pill ok">继续，补充更多项目模板</span>'],
+ ['门店巡检整改','8 店全部使用','照片识别 81%','区域经理每周约 3 小时','整改按时完成率 52% → 87%','<span class="pill warn">识别准确率低的 3 项改回人工</span>'],
+]);
+$('#riskCards').innerHTML = [
+ ['幻觉','回答必须引用知识库原文和版本号；找不到依据就说找不到，不让模型自由发挥；每月抽检 100 条。'],
+ ['隐私','顾客姓名、手机号、照片进入 AI 前脱敏；顾客照片只在内部系统流转，不发给外部模型；只用顾客授权的数据。'],
+ ['权限','知识按“全员 / 门店 / 店长 / 财务 / 本人”五级可见；成本、薪酬、病历类知识不进通用问答。'],
+ ['医疗合规','诊疗判断、个体禁忌、不良反应处置一律转医生；对外话术发送前过医疗广告禁用词检查；禁用词库由法务每半年复核。'],
+].map(([t,c])=>`<div class="card"><h3>${t}</h3><p style="margin:0">${c}</p></div>`).join('');
+</script>
+</body>
+</html>
