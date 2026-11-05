@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>高定西服品牌 AI 业务台</title>
+<style>
+:root{
+  --bg:#f2f4f7;--panel:#fff;--ink:#131c2b;--ink2:#566275;--ink3:#8a94a5;--line:#e0e5ec;
+  --nav:#141b2b;--nav2:#25304a;--navink:#c2cbdc;
+  --acc:#9a6b1f;--accbg:#f8f0e1;--acc2:#6f4b12;
+  --bad:#c0392b;--badbg:#fdecea;--warn:#b45309;--warnbg:#fff3df;--ok:#1f7a4d;--okbg:#e6f4ec;--info:#2557c7;--infobg:#e8effc;
+  --r:10px;color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:236px;flex-shrink:0;background:var(--nav);color:var(--navink);padding:20px 12px 30px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{color:#fff;font-weight:700;font-size:17px;padding:0 10px;line-height:1.4}
+.brand small{display:block;font-weight:400;font-size:12px;color:#8592ad;margin-top:4px}
+.group{margin:18px 10px 4px;font-size:11.5px;color:#7884a0;letter-spacing:1px}
+nav button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;color:var(--navink);padding:8px 10px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+nav button:hover{background:var(--nav2);color:#fff}
+nav button.on{background:var(--acc);color:#fff}
+nav button .k{font-size:11px;color:#7884a0}
+nav button.on .k{color:#f6e6c6}
+main{flex:1;min-width:0;padding:0 36px 90px}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px;font-size:13px;color:var(--ink2)}
+.top .sp{flex:1}
+.pill{display:inline-block;font-size:12px;padding:1px 9px;border-radius:20px;background:var(--accbg);color:var(--acc2);font-weight:600;white-space:nowrap}
+.pill.bad{background:var(--badbg);color:var(--bad)}.pill.warn{background:var(--warnbg);color:var(--warn)}.pill.ok{background:var(--okbg);color:var(--ok)}.pill.info{background:var(--infobg);color:var(--info)}.pill.grey{background:#eef1f5;color:var(--ink2)}
+section{display:none}section.on{display:block}
+h1{font-size:23px;margin:0 0 4px;line-height:1.35}
+.sub{color:var(--ink2);margin:0 0 18px}
+.jd{font-size:13px;color:var(--ink2);background:#fff;border:1px dashed #b9c3d1;border-radius:8px;padding:6px 12px;margin:-6px 0 18px}
+.jd b{color:var(--acc2)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;min-width:0}
+.card h3{margin:0 0 10px;font-size:16px}
+.card h3 small{font-weight:400;color:var(--ink3);font-size:12.5px;margin-left:6px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g2{display:grid;gap:16px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.kpi{background:#f7f9fb;border-radius:8px;padding:8px 10px}
+.kpi .l{font-size:12px;color:var(--ink3)}
+.kpi .v{font-size:21px;font-weight:700;line-height:1.3}
+.kpi .t{font-size:11.5px;color:var(--ink3)}
+.kpi.below .v{color:var(--bad)}
+.chan-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chan-h b{font-size:16px}
+.spark{display:block;width:100%;height:44px;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12.5px;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px}
+td{border-bottom:1px solid #eef1f5;padding:8px;vertical-align:top}
+tr:last-child td{border-bottom:0}
+.tw{overflow-x:auto}
+.bar{height:8px;border-radius:4px;background:#e8ecf1;overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.bar.red i{background:var(--bad)}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 6px;color:var(--ink2)}
+textarea,select{width:100%;font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+textarea{min-height:96px;resize:vertical}
+textarea:focus,select:focus{outline:2px solid #e2c48c;border-color:var(--acc)}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--acc);color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--acc2)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink2)}
+.chip.on,.chip:hover{border-color:var(--acc);color:var(--acc2);background:var(--accbg)}
+.res-h{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:10px;padding:6px 0;border-bottom:1px dashed #e5e9ef}
+.steps li:last-child{border-bottom:0}
+.steps .n{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accbg);color:var(--acc2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.steps li.done .n{background:var(--acc);color:#fff}
+.steps li.done span{color:var(--ink3);text-decoration:line-through}
+.reply{background:#f6faf9;border-left:3px solid var(--acc);padding:10px 12px;border-radius:0 8px 8px 0;font-size:14px;white-space:pre-wrap}
+.esc{border-radius:8px;padding:10px 12px;font-size:14px}
+.esc.yes{background:var(--badbg);color:#7d241a}
+.esc.no{background:var(--okbg);color:#1a5a3b}
+.esc.mid{background:var(--warnbg);color:#7a4206}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#f4f6f9;border-radius:8px;padding:10px 12px;white-space:pre-wrap}
+.empty{color:var(--ink3);font-size:14px;padding:30px 10px;text-align:center}
+.alert{display:flex;gap:12px;align-items:flex-start;background:var(--badbg);border:1px solid #f3c4bd;border-radius:var(--r);padding:12px 16px;margin-bottom:16px}
+.alert b{color:var(--bad)}
+.alert .ic{font-size:20px;line-height:1.2}
+.topic{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #eef1f5;cursor:pointer;border-radius:6px}
+.topic:hover,.topic.on{background:var(--accbg)}
+.topic .nm{flex:1;min-width:0}
+.topic .ct{width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.topic .ch{width:66px;text-align:right;font-size:13px;font-weight:700}
+.up{color:var(--bad)}.down{color:var(--ok)}
+.quote{background:#f7f9fb;border-radius:8px;padding:7px 10px;margin:6px 0;font-size:13.5px;color:var(--ink2)}
+.chat{display:flex;flex-direction:column;gap:8px}
+.msg{max-width:88%;padding:8px 12px;border-radius:10px;font-size:14px;position:relative}
+.msg.p{background:#eef1f5;align-self:flex-start}
+.msg.a{background:var(--accbg);align-self:flex-end}
+.msg .who{display:block;font-size:11.5px;color:var(--ink3)}
+.msg.flag{outline:2px solid var(--bad)}
+.msg .fl{display:block;margin-top:4px;font-size:12px;color:var(--bad);font-weight:600}
+.score{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed #e5e9ef;font-size:14px}
+.score:last-child{border-bottom:0}
+.score .nm{flex:1}
+.flow{display:flex;flex-direction:column;gap:6px}
+.fnode{display:grid;grid-template-columns:120px minmax(0,1fr) 64px;align-items:center;gap:10px;font-size:14px}
+.fnode .bar{height:14px}
+.fnode .num{text-align:right;font-variant-numeric:tabular-nums}
+.kan{display:grid;grid-template-columns:repeat(5,minmax(180px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:#e9edf2;border-radius:var(--r);padding:10px}
+.col h4{margin:0 0 8px;font-size:13.5px;display:flex;justify-content:space-between}
+.kc{background:#fff;border-radius:8px;padding:10px;margin-bottom:8px;font-size:13.5px;border:1px solid var(--line)}
+.kc b{display:block;font-size:14px;margin-bottom:4px}
+.kc .src{font-size:12px;color:var(--ink3)}
+.kc .eff{margin-top:6px;font-size:12.5px;background:var(--okbg);color:#1a5a3b;border-radius:6px;padding:3px 7px}
+.map td:first-child{font-weight:600;white-space:nowrap}
+.note{font-size:12.5px;color:var(--ink3);margin-top:8px}
+.foot{margin-top:28px;font-size:12.5px;color:var(--ink3);border-top:1px solid var(--line);padding-top:12px}
+.hero{background:var(--nav);color:#e6ebf4;border-radius:var(--r);padding:22px 24px;margin-bottom:16px}
+.hero h1{color:#fff}
+.hero p{color:#c4cde0;margin:6px 0 0}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom, 0px));transform:translate(-50%,20px);background:var(--nav);color:#fff;padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:900px){.g2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){
+  .app{flex-direction:column}
+  nav{width:100%;height:auto;position:sticky;top:0;z-index:10;padding:10px 12px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+  nav .brand,nav .group{display:none}
+  nav button{width:auto;flex-shrink:0}
+  nav button .k{display:none}
+  main{padding:0 16px 80px}
+  .top{position:static}
+}
+@media (max-width:640px){
+  h1{font-size:20px}
+  .card{padding:14px 14px}
+  .kpi .v{font-size:18px}
+  table.cards thead{display:none}
+  table.cards,table.cards tbody,table.cards tr,table.cards td{display:block;width:100%}
+  table.cards tr{display:flex!important;flex-wrap:wrap;gap:2px 14px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:8px;background:#fff}
+  table.cards td{border:0;padding:2px 0;width:auto!important;flex:0 1 auto;max-width:100%}
+  table.cards td:first-child{flex-basis:100%;font-weight:700}
+  table.cards td::before{content:attr(data-label);display:inline;font-size:12px;color:var(--ink3);margin-right:6px}
+  table.cards td:first-child::before{display:none}
+  table.cards.long td{flex-basis:100%}
+  table.cards.long td::before{display:block}
+  #fcrBody td:nth-child(4){flex:1 1 140px}
+  #fcrBody td:nth-child(4)::before{display:none}
+  table.cards td[data-label=""]::before{display:none}
+  .fnode{grid-template-columns:96px minmax(0,1fr) 52px;font-size:13px}
+  .kan{grid-template-columns:minmax(0,1fr);overflow:visible}
+  .msg{max-width:95%}
+}
+[hidden]{display:none!important}
+.live{background:#0f1524;border-radius:var(--r);padding:12px;color:#e6ebf4;height:360px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.cm{font-size:13.5px;line-height:1.55}
+.cm .u{color:#9fb0cf;margin-right:6px}
+.cm.ai{background:#1d2740;border-radius:8px;padding:6px 10px;border-left:3px solid #c9a24e}
+.cm .lead{display:inline-block;margin-left:6px;font-size:11.5px;background:#c9a24e;color:#141b2b;border-radius:10px;padding:0 7px;font-weight:700}
+.swatch{display:inline-block;width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;border:1px solid rgba(0,0,0,.15)}
+.spec{display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 10px;font-size:14px}
+.spec dt{color:var(--ink3)}.spec dd{margin:0}
+</style>
+</head>
+<body>
+<div class="app">
+<nav id="nav">
+  <div class="brand">高定西服品牌 AI 业务台<small>AI 运营工程师 · 面试演示原型</small></div>
+  <div class="group">总览</div>
+  <button data-tab="home" class="on">演示说明<span class="k">首页</span></button>
+  <div class="group">接待与直播</div>
+  <button data-tab="recept">智能接待 · 线索筛选<span class="k">职责 1</span></button>
+  <button data-tab="live">数字人直播问答<span class="k">职责 1</span></button>
+  <div class="group">获客</div>
+  <button data-tab="geo">GEO 圈层获客<span class="k">职责 2</span></button>
+  <button data-tab="leads">线索运营看板<span class="k">职责 2</span></button>
+  <div class="group">内容与培训</div>
+  <button data-tab="style">AI 款式 · 短视频<span class="k">职责 4</span></button>
+  <button data-tab="course">AI 实操课程<span class="k">职责 3</span></button>
+  <button data-tab="ops">系统对接与运维<span class="k">职责 4</span></button>
+</nav>
+<main>
+  <div class="top"><span class="pill grey">示例品牌：某成都高定西服品牌（虚构）</span><span class="pill grey">数据周期：近 30 天</span><span class="sp"></span><span>演示原型 · 全部为模拟数据</span></div>
+
+  <section id="home" class="on">
+    <div class="hero">
+      <h1>高定西服品牌 AI 业务台</h1>
+      <p>高定的生意靠“少量、高价、长决策”的客户。这个台子把 AI 用在三件事上：让客户在 AI 搜索和直播里先找到你，咨询进来后自动筛出高意向线索交给顾问，再用 AI 提效款式提案和内容生产。</p>
+      <div class="btns"><button class="btn" onclick="go('recept')">先看智能接待与线索筛选</button><button class="btn ghost" onclick="go('geo')">看 GEO 获客</button></div>
+    </div>
+    <div class="card"><h3>岗位职责 × 演示模块</h3>
+      <div class="tw"><table class="cards long"><thead><tr><th>岗位职责</th><th>演示模块</th><th>能看到什么</th></tr></thead><tbody id="mapBody"></tbody></table></div>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>推荐演示顺序（约 8 分钟）</h3>
+        <ol style="margin:0;padding-left:20px">
+          <li>智能接待：一句“下个月结婚想定西装”，AI 回答并自动判成 A 级线索。</li>
+          <li>直播问答：弹幕里的问题自动回答，高意向评论被标出来。</li>
+          <li>GEO 获客：“成都西服定制哪家好”在各 AI 平台里有没有我们。</li>
+          <li>AI 款式：按场合和体型生成提案，一键出短视频脚本。</li>
+        </ol>
+      </div>
+      <div class="card"><h3>说明</h3>
+        <ul style="margin:0;padding-left:20px">
+          <li>这是我针对岗位自己设计的<b>功能原型</b>，没有在任何企业使用过。</li>
+          <li>品牌、价格、工期、竞品、线索数据均为<b>模拟</b>，用来说明思路。</li>
+          <li>原型里的回答用规则模拟；实际落地接大模型 API + 品牌知识库（向量检索），数字人接第三方数字人平台。</li>
+          <li>“GEO 获客”页的检测方法来自我自己搭建并在用的 GEO 检测系统。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="recept">
+    <h1>智能接待 · 线索筛选</h1>
+    <p class="sub">客户在私信、小程序、企业微信里咨询，AI 按品牌知识库回答，同时把“场合、时间、预算、人数”抽出来给线索打分，A 级直接推给顾问。</p>
+    <div class="jd"><b>对应职责 1：</b>搭建并运维智能客服，构建行业知识库，用于接待与线索筛选。</div>
+    <div class="g2">
+      <div class="card"><h3>客户咨询</h3>
+        <div class="chips" id="rcChips"></div>
+        <label for="rcIn">客户原话（可修改或自己输入）</label>
+        <textarea id="rcIn" style="min-height:80px"></textarea>
+        <div class="btns"><button class="btn" id="rcBtn">AI 接待</button></div>
+        <div id="rcReply" style="margin-top:12px"></div>
+      </div>
+      <div class="card" id="leadCard"><h3>线索卡<small>自动生成，同步到线索看板</small></h3><div id="leadOut"><div class="empty">选一条咨询，点“AI 接待”。</div></div></div>
+    </div>
+    <div class="card"><h3>知识库收录内容（V1）</h3><div class="tw"><table class="cards"><thead><tr><th>类别</th><th>条目数</th><th>示例</th><th>维护人</th></tr></thead><tbody id="kbBody"></tbody></table></div></div>
+  </section>
+
+  <section id="live">
+    <h1>数字人直播问答</h1>
+    <p class="sub">数字人按口播稿讲工艺和款式；弹幕里的问题由 AI 按知识库实时回答，高意向评论自动标记成线索，广告和无关评论过滤掉。</p>
+    <div class="jd"><b>对应职责 1：</b>搭建并运维品牌数字人，用于直播与线索筛选。</div>
+    <div class="g2">
+      <div class="card"><h3>直播间弹幕（模拟）</h3>
+        <div class="live" id="liveBox"><div class="cm" style="color:#9fb0cf">点下方按钮开始模拟直播。</div></div>
+        <div class="btns"><button class="btn" id="liveBtn">开始模拟直播</button></div>
+      </div>
+      <div>
+        <div class="card"><h3>本场数据</h3><div class="kpis" id="liveKpi"></div></div>
+        <div class="card"><h3>数字人口播稿（当前段落）</h3><div class="reply">各位晚上好，今天给大家讲一件西装从量体到成衣要经过的 28 道工序。很多朋友问，定制和成衣到底差在哪？差在肩线和驳头——成衣按标准号型裁剪，定制按你的肩斜和体态单独打版……</div><p class="note">口播稿由 AI 按“工艺知识库 + 当周主推款”生成，主播审核后导入数字人平台。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="geo">
+    <h1>GEO 圈层获客</h1>
+    <p class="sub">高端客户越来越多先问 AI：“成都西服定制哪家好”。先测品牌在各 AI 平台里有没有被推荐，再按缺口补内容；同时在婚庆和企业两个圈层做定向线索运营。</p>
+    <div class="jd"><b>对应职责 2：</b>搭建 GEO 圈层 AI 获客体系，针对企业、婚庆高端客户做精准线索运营。</div>
+    <div class="card"><h3>AI 搜索可见度检测<small>每题在 4 个平台各问一次；✓ 后数字为推荐位次</small></h3>
+      <div class="kpis" id="geoKpi" style="margin-bottom:12px"></div>
+      <div class="tw"><table class="cards"><thead><tr><th>客户会问的问题</th><th>圈层</th><th>豆包</th><th>DeepSeek</th><th>元宝</th><th>Kimi</th></tr></thead><tbody id="geoBody"></tbody></table></div>
+    </div>
+    <div class="g2">
+      <div class="card"><h3>AI 最常引用的来源</h3><div id="srcList"></div><p class="note">内容往 AI 常引用的地方投，比到处发更有效。</p></div>
+      <div class="card"><h3>补内容计划（按缺口排序）</h3><ul class="steps" id="planList"></ul></div>
+    </div>
+    <div class="card"><h3>圈层线索运营</h3><div class="tw"><table class="cards"><thead><tr><th>圈层</th><th>触达方式</th><th>AI 怎么帮忙</th><th>追踪方式</th></tr></thead><tbody id="circleBody"></tbody></table></div></div>
+  </section>
+
+  <section id="leads">
+    <h1>线索运营看板</h1>
+    <p class="sub">所有渠道的线索汇到一张表，按来源看质量；A 级线索超时没跟进会提醒。</p>
+    <div class="jd"><b>对应职责 2：</b>精准线索运营。</div>
+    <div class="card"><h3>按来源<small>近 30 天</small></h3><div class="tw"><table class="cards"><thead><tr><th>来源</th><th>线索数</th><th>A 级占比</th><th>到店率</th><th>成交率</th><th>平均客单价</th></tr></thead><tbody id="srcBody"></tbody></table></div>
+      <p class="note">看得出的规律：AI 搜索和婚庆合作来的线索少，但成交率最高，值得加大投入。</p></div>
+    <div class="card"><h3>待跟进提醒</h3><div id="fuList"></div></div>
+  </section>
+
+  <section id="style">
+    <h1>AI 款式提案 · 短视频脚本</h1>
+    <p class="sub">顾问填几项客户信息，AI 给出款式提案和生图提示词；同一个提案可以一键生成短视频脚本。</p>
+    <div class="jd"><b>对应职责 4：</b>落地 AI 款式、短视频内容生成等场景。</div>
+    <div class="g2">
+      <div class="card"><h3>客户信息</h3>
+        <label style="margin-top:0">场合</label><div class="chips" data-k="occ"></div>
+        <label>体型</label><div class="chips" data-k="body"></div>
+        <label>风格</label><div class="chips" data-k="sty"></div>
+        <div class="btns"><button class="btn" id="stBtn">生成款式提案</button><button class="btn ghost" id="vdBtn" disabled>生成短视频脚本</button></div>
+      </div>
+      <div class="card" id="stCard"><h3>款式提案</h3><div id="stOut"><div class="empty">选好三项，点“生成款式提案”。</div></div></div>
+    </div>
+    <div class="card" id="vdCard" hidden><h3>短视频脚本（30 秒）</h3><div id="vdOut"></div></div>
+  </section>
+
+  <section id="course">
+    <h1>服装高定 AI 实操课程</h1>
+    <p class="sub">给门店顾问、版师和内容同事的 6 节实操课，每节课结束都有一个能直接用的产出。</p>
+    <div class="jd"><b>对应职责 3：</b>研发服装高定 AI 实操课程，用于内部培训与行业分享。</div>
+    <div class="card"><div class="tw"><table class="cards"><thead><tr><th>课程</th><th>对象</th><th>课后产出</th><th>时长</th></tr></thead><tbody id="crBody"></tbody></table></div>
+      <p class="note">内部版用品牌真实案例；行业分享版把客户信息和价格脱敏后使用。</p></div>
+  </section>
+
+  <section id="ops">
+    <h1>系统对接与运维</h1>
+    <p class="sub">一套知识库，接到私信、小程序、直播三个入口；每周看运维指标，按问题迭代。</p>
+    <div class="jd"><b>对应职责 4：</b>AI 工具对接、工作流搭建、系统运维迭代。</div>
+    <div class="g2">
+      <div class="card"><h3>架构</h3><ul class="steps" id="archList"></ul></div>
+      <div class="card"><h3>运维指标<small>本周（模拟）</small></h3><div class="tw"><table class="cards"><thead><tr><th>指标</th><th>本周</th><th>目标</th></tr></thead><tbody id="opsBody"></tbody></table></div></div>
+    </div>
+    <div class="card"><h3>迭代记录</h3><ul class="steps" id="iterList"></ul></div>
+  </section>
+
+  <div class="foot">演示原型：根据公开岗位描述自行设计，与任何公司无关；示例品牌、价格、竞品与全部数据均为虚构。</div>
+</main>
+</div>
+<div id="toast"></div>
+<script>
+const $ = (s, r=document) => r.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.h); toast.h=setTimeout(()=>el.classList.remove('on'),1800); }
+function go(tab){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on', s.id===tab));
+  window.scrollTo({top:0});
+  const nb=document.querySelector(`nav button[data-tab="${tab}"]`); if(nb && innerWidth<860) nb.scrollIntoView({inline:'center',block:'nearest'});
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function rows(el, heads, data){ el.innerHTML = data.map(r=>'<tr>'+r.map((c,i)=>`<td data-label="${heads[i]||''}">${c}</td>`).join('')+'</tr>').join(''); }
+function scrollIfNarrow(el){ if(innerWidth<900) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+const G={A:'bad',B:'warn',C:'grey'};
+
+rows($('#mapBody'), ['岗位职责','演示模块','能看到什么'], [
+ ['1 数字人、智能客服、知识库','智能接待 · 数字人直播问答','按知识库回答；抽取场合 / 时间 / 预算 / 人数给线索打分；直播弹幕自动回答并标记高意向'],
+ ['2 GEO 圈层获客','GEO 圈层获客 · 线索看板','AI 搜索可见度检测、引用来源、补内容计划；婚庆 / 企业圈层运营；按来源看线索质量'],
+ ['3 AI 实操课程','AI 实操课程','6 节课，每节有可直接用的产出'],
+ ['4 工具对接、工作流、运维；AI 款式、短视频','AI 款式 · 系统运维','款式提案 + 生图提示词 + 短视频脚本；架构、运维指标、迭代记录'],
+]);
+
+/* 智能接待 */
+const RC = [
+ {tag:'婚礼新郎装', q:'下个月 18 号结婚，想定一套新郎西装，大概多少钱？来得及吗？', kw:/结婚|婚礼|新郎|伴郎/,
+  r:'恭喜您！距离婚期约 4 周，全定制正常需要 4–6 周并试衣 2 次，时间偏紧。建议两种方案：① 半定制（3 周，试衣 1 次），¥3,800 起；② 全定制加急（约 4 周），¥6,800 起，需本周内到店量体。我帮您约一位顾问，今天先电话沟通一下款式和时间可以吗？',
+  f:[['场合','婚礼（新郎）'],['时间','约 4 周后，紧迫'],['预算','未提及'],['人数','1 人（可能含伴郎）']], g:'A', s:88, next:'30 分钟内顾问电话联系；本周约到店量体；顺带询问伴郎是否同定。'},
+ {tag:'企业团装', q:'我们公司 60 个人想做一批团装，春节前要，有什么面料推荐？', kw:/公司|团装|企业|员工|批量|工装/,
+  r:'您好！60 人团装我们可以安排上门量体，常用三档面料：日常通勤款（羊毛混纺，耐穿抗皱）、商务款（全羊毛精纺）、高管款（高支羊毛）。60 人规模从量体到交付约 3–4 周，春节前交付需要在 12 月中旬前完成量体。方便留个联系方式吗？企业客户经理会给您做一份面料与报价方案。',
+  f:[['场合','企业团装'],['时间','春节前'],['预算','未提及'],['人数','60 人']], g:'A', s:92, next:'企业客户经理当天联系；准备三档面料方案与报价；约上门量体时间。'},
+ {tag:'非遗工艺', q:'你们说的非遗工艺具体是什么？', kw:/非遗|工艺|刺绣|手工/,
+  r:'我们的非遗定制是把传统刺绣等手工艺用在西装细节上，比如内衬纹样、袖口或口袋巾刺绣，图案可以按您的寓意定制（演示内容，具体以品牌实际工艺为准）。这类定制工期会多 1–2 周。您是想做礼服还是日常穿着呢？',
+  f:[['场合','未明确'],['时间','未提及'],['预算','未提及'],['人数','—']], g:'B', s:55, next:'加企微，推送非遗工艺案例图集；3 天后跟进需求。'},
+ {tag:'只看看', q:'看看就好，有没有便宜点的成衣？', kw:/便宜|成衣|看看/,
+  r:'谢谢您关注！我们主要做量体定制，暂时没有成衣。入门的半定制 ¥3,800 起，适合第一次尝试定制的朋友。如果之后有正式场合需要，欢迎随时来店里试穿面料。',
+  f:[['场合','未明确'],['时间','—'],['预算','偏低'],['人数','—']], g:'C', s:18, next:'不推顾问；进入内容触达池（每月一次案例推送）。'},
+];
+$('#rcChips').innerHTML = RC.map((r,i)=>`<button class="chip" data-i="${i}">${r.tag}</button>`).join('');
+document.querySelectorAll('#rcChips .chip').forEach(b=>b.onclick=()=>{ document.querySelectorAll('#rcChips .chip').forEach(x=>x.classList.toggle('on',x===b)); $('#rcIn').value=RC[b.dataset.i].q; recept(); });
+function recept(){
+  const t=$('#rcIn').value.trim(); if(!t){ toast('先输入客户咨询'); return; }
+  const h=[1,0,2,3].map(i=>RC[i]).find(r=>r.kw.test(t));
+  if(!h){ $('#rcReply').innerHTML='<div class="esc mid">知识库没有找到依据：转人工顾问，并把这个问题记入知识库待补充清单。</div>'; $('#leadOut').innerHTML='<div class="empty">信息不足，暂不生成线索卡。</div>'; return; }
+  $('#rcReply').innerHTML=`<label style="margin-top:0">AI 回复（引用：价格与工期、面料、工艺 3 类知识）</label><div class="reply">${esc(h.r)}</div>`;
+  $('#leadOut').innerHTML=`<div class="res-h"><span class="pill ${G[h.g]}">${h.g} 级线索</span><span class="pill grey">意向分 ${h.s}</span></div>
+   <dl class="spec">${h.f.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+   <label>下一步</label><div class="esc ${h.g==='A'?'yes':h.g==='B'?'mid':'no'}">${esc(h.next)}</div>
+   <p class="note">打分规则：时间紧迫 +30、明确场合 +20、人数 ≥ 10 +30、提到预算 +10、只问低价 −30。规则由销售负责人确认后上线，每月按成交结果校准。</p>`;
+  scrollIfNarrow($('#leadCard'));
+}
+$('#rcBtn').onclick=recept;
+rows($('#kbBody'), ['类别','条目数','示例','维护人'], [
+ ['价格与工期','42','全定制 / 半定制 / 加急的价格区间与工期','店长'],
+ ['面料','86','面料产地、支数、适合季节与场合','版师'],
+ ['工艺与非遗','35','手工工序、刺绣工艺与工期影响','工艺师傅'],
+ ['量体与试衣流程','18','预约、上门量体、试衣次数','顾问组'],
+ ['婚礼 / 团装方案','24','新郎伴郎搭配、企业团装起订与交付','顾问组'],
+]);
+
+/* 直播 */
+const LV = [
+ ['u','西装小白','定制和成衣到底差在哪？'],
+ ['ai','','差在版型：成衣按标准号型，定制按你的肩斜、体态单独打版，肩线和腰身会更贴合。'],
+ ['u','阿杰','明年 5 月结婚，伴郎 4 个，一起做怎么算？','lead'],
+ ['ai','','新郎 + 4 位伴郎可以按婚礼套系做，伴郎款统一面料能省工期。已帮你登记，顾问会私信你方案。'],
+ ['x','某某代运营','加我微信，帮你涨粉…（已过滤）'],
+ ['u','Lily','给老公定一套商务款，大概多少钱？','lead'],
+ ['ai','','商务全定制 ¥6,800 起，半定制 ¥3,800 起，面料不同价格不同。可以先预约到店看面料。'],
+ ['u','路过','主播今天穿的是什么颜色？'],
+ ['ai','','今天这套是藏青色精纺羊毛，商务和婚礼都适合。'],
+ ['u','HR-陈','公司 30 人年会想做礼服，能上门量吗？','lead'],
+ ['ai','','可以上门量体，30 人一般 3 周交付。已登记为企业线索，客户经理会联系您。'],
+];
+let liveTimer=null;
+function liveKpi(q,a,l,f){ $('#liveKpi').innerHTML=[['弹幕提问',q],['AI 已回答',a],['高意向线索',l]].map(([k,v])=>`<div class="kpi"><div class="l">${k}</div><div class="v">${v}</div></div>`).join('')+`<div class="note" style="grid-column:1/-1;margin:0">已过滤广告 / 无关评论 ${f} 条</div>`; }
+liveKpi(0,0,0,0);
+$('#liveBtn').onclick=()=>{
+  clearInterval(liveTimer); const box=$('#liveBox'); box.innerHTML=''; let i=0,q=0,a=0,l=0,f=0;
+  liveTimer=setInterval(()=>{
+    if(i>=LV.length){ clearInterval(liveTimer); toast('模拟结束'); return; }
+    const [k,u,t,tag]=LV[i++]; const d=document.createElement('div');
+    if(k==='ai'){ d.className='cm ai'; d.innerHTML=`<span class="u">AI 助手</span>${esc(t)}`; a++; }
+    else if(k==='x'){ d.className='cm'; d.style.opacity='.45'; d.innerHTML=`<span class="u">${esc(u)}</span>${esc(t)}`; f++; }
+    else { d.className='cm'; d.innerHTML=`<span class="u">${esc(u)}</span>${esc(t)}${tag?'<span class="lead">线索</span>':''}`; q++; if(tag) l++; }
+    box.appendChild(d); box.scrollTop=box.scrollHeight; liveKpi(q,a,l,f);
+  }, 900);
+};
+
+/* GEO */
+const GQ = [
+ ['成都西服定制哪家好','通用',[0,3,0,0]],
+ ['成都婚礼西装定制推荐','婚庆',[0,0,0,0]],
+ ['新郎西装定做要提前多久','婚庆',[0,0,0,0]],
+ ['成都企业团装定制公司','企业',[2,0,0,4]],
+ ['高端定制西装和成衣的区别','通用',[0,0,0,0]],
+ ['成都非遗刺绣定制西装','通用',[1,1,2,0]],
+];
+const hit = GQ.reduce((s,q)=>s+q[2].filter(x=>x>0).length,0), tot=GQ.length*4;
+$('#geoKpi').innerHTML=[['提及率',Math.round(hit/tot*100)+'%','24 次回答中出现 '+hit+' 次'],['AI 搜索占有率',' 9%','品牌 ÷（品牌 + 竞品）提及'],['婚庆类问题','0 / 8','最大缺口']].map(([k,v,t],i)=>`<div class="kpi ${i!==1?'below':''}"><div class="l">${k}</div><div class="v">${v}</div><div class="t">${t}</div></div>`).join('');
+const mark = v => v>0 ? `<span class="pill ok">✓ ${v}</span>` : '<span class="pill grey">—</span>';
+rows($('#geoBody'), ['客户会问的问题','圈层','豆包','DeepSeek','元宝','Kimi'], GQ.map(([q,c,v])=>[esc(q),`<span class="pill ${c==='婚庆'?'warn':c==='企业'?'info':'grey'}">${c}</span>`,...v.map(mark)]));
+$('#srcList').innerHTML = [['小红书笔记',38],['大众点评',24],['知乎回答',17],['本地婚嫁论坛',11],['品牌官网',4]].map(([n,v])=>`<div class="score"><span class="nm">${n}</span><div class="bar" style="width:120px"><i style="width:${v/38*100}%"></i></div><b style="width:40px;text-align:right">${v}</b></div>`).join('');
+$('#planList').innerHTML = [
+ '婚庆问题全部没被提到：在小红书、知乎发“新郎西装定制时间线 / 伴郎套系怎么选”问答型内容',
+ '“定制和成衣的区别”是高频科普题：写一篇带对比表格的长文，发知乎 + 官网',
+ '大众点评被引用多：补全门店信息、工期与价格区间，引导到店客户写真实评价',
+ '企业团装已有排名：补“起订量、交付周期、上门量体”结构化页面，巩固位次',
+].map((s,i)=>`<li><span class="n">${i+1}</span><span>${esc(s)}</span></li>`).join('');
+rows($('#circleBody'), ['圈层','触达方式','AI 怎么帮忙','追踪方式'], [
+ ['婚庆','婚纱摄影、婚礼策划、婚宴酒店合作，互推套餐','按婚期自动生成“倒计时提醒”和搭配方案，合作方直接转发','每个合作方一个专属二维码 / 优惠码'],
+ ['企业','行政 / HR 社群、商会、园区活动','自动生成团装方案和报价单初稿，客户经理改完就能发','企业线索单独建档，记录人数与决策人'],
+ ['高端私域','老客户转介绍、车友会、商务社群','老客户生日 / 换季自动提醒顾问跟进，推送新面料','转介绍关系写进客户档案'],
+]);
+
+/* 线索看板 */
+rows($('#srcBody'), ['来源','线索数','A 级占比','到店率','成交率','平均客单价'], [
+ ['AI 搜索（GEO）','23','48%','61%','<b>35%</b>','¥7,200'],
+ ['小红书','96','21%','32%','14%','¥5,100'],
+ ['大众点评','58','26%','45%','22%','¥5,600'],
+ ['婚庆合作','31','55%','68%','<b>39%</b>','¥8,900'],
+ ['企业转介绍','12','67%','—','33%','¥186,000 / 单'],
+ ['直播','74','12%','18%','8%','¥4,300'],
+]);
+$('#fuList').innerHTML = [['阿杰（婚礼 · 伴郎 4 人）','A','直播线索，已过 26 小时未联系','bad'],['HR-陈（年会 30 人）','A','客户经理已联系，待发方案','warn'],['王先生（商务全定制）','B','到店看过面料，3 天未回复','warn']].map(([n,g,s,c])=>`<div class="topic" style="cursor:default"><span class="pill ${G[g]}">${g}</span><span class="nm">${n}<div class="note" style="margin:0">${s}</div></span><span class="pill ${c}">${c==='bad'?'已超时':'跟进中'}</span></div>`).join('');
+
+/* 款式 */
+const OPT = {occ:['婚礼','商务','晚宴'], body:['偏瘦','标准','偏壮'], sty:['经典','时尚','低调']};
+const sel = {occ:'婚礼', body:'标准', sty:'经典'};
+document.querySelectorAll('[data-k]').forEach(c=>{ const k=c.dataset.k; c.innerHTML=OPT[k].map(v=>`<button class="chip ${sel[k]===v?'on':''}">${v}</button>`).join(''); c.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{ sel[k]=b.textContent; c.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b)); }); });
+const COLOR = {婚礼:{经典:['午夜蓝','#1c2541'],时尚:['酒红','#5a1a2b'],低调:['炭灰','#3a3d42']},商务:{经典:['藏青','#1f2a44'],时尚:['灰蓝格纹','#4a5a73'],低调:['深灰','#44474d']},晚宴:{经典:['黑色','#111111'],时尚:['墨绿','#1e3b33'],低调:['深棕','#3d2b22']}};
+const BODY = {偏瘦:'略加垫肩、双排扣增加横向量感，腰身不过度收',标准:'标准修身版型，腰线自然收紧',偏壮:'单排两粒扣、深 V 开口拉长线条，避免浅色大格纹'};
+let lastStyle=null;
+$('#stBtn').onclick=()=>{
+  const [cn,hex]=COLOR[sel.occ][sel.sty];
+  const lapel = sel.occ==='晚宴'?'青果领（缎面）':sel.occ==='婚礼'&&sel.sty!=='低调'?'戗驳领':'平驳领';
+  const fabric = sel.occ==='晚宴'&&sel.sty==='时尚'?'丝绒':'全羊毛精纺（Super 120s）';
+  lastStyle={cn,hex,lapel,fabric};
+  $('#stOut').innerHTML=`<div class="res-h"><span class="pill info">${sel.occ}</span><span class="pill grey">${sel.body}</span><span class="pill grey">${sel.sty}</span></div>
+   <dl class="spec"><dt>主色</dt><dd><span class="swatch" style="background:${hex}"></span>${cn}</dd><dt>面料</dt><dd>${fabric}</dd><dt>驳头</dt><dd>${lapel}</dd><dt>版型建议</dt><dd>${BODY[sel.body]}</dd><dt>细节</dt><dd>${sel.occ==='婚礼'?'内衬刺绣新人姓名缩写与婚期；搭配同色系口袋巾':'袖口真扣眼可开合；内衬可选品牌纹样'}</dd></dl>
+   <label>生图提示词（交给图像模型出效果图）</label>
+   <div class="mono">一位${sel.body}身材的亚洲男士，身穿${cn}${fabric}定制西装，${lapel}，${sel.sty}风格，${sel.occ}场景，棚拍，柔和侧光，全身像，高级质感，真实面料纹理</div>`;
+  $('#vdBtn').disabled=false; $('#vdCard').hidden=true; scrollIfNarrow($('#stCard'));
+};
+$('#vdBtn').onclick=()=>{
+  if(!lastStyle) return; const s=lastStyle;
+  const shots=[['0–3 秒','特写：剪刀裁开'+s.cn+'面料','“一套'+sel.occ+'西装，从这一刀开始。”'],['3–10 秒','量体：顾问测量肩宽、背长','“'+sel.body+'身材，版型要这样调——'+BODY[sel.body].split('，')[0]+'。”'],['10–20 秒','工艺：手工缝驳头、'+(sel.occ==='婚礼'?'内衬刺绣婚期':'锁真扣眼'),'“'+s.lapel+'，全手工完成。”'],['20–27 秒','成衣：客户试穿转身','“合身，是定制和成衣最大的区别。”'],['27–30 秒','品牌字卡 + 预约方式','“评论区留言‘'+sel.occ+'’，领取量体预约。”']];
+  $('#vdOut').innerHTML=`<div class="tw"><table class="cards"><thead><tr><th>时间</th><th>画面</th><th>口播 / 字幕</th></tr></thead><tbody>${shots.map(r=>`<tr>${r.map((c,i)=>`<td data-label="${['时间','画面','口播 / 字幕'][i]}">${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="note">结尾引导留言关键词，评论区线索自动进入线索看板（来源记为“短视频”）。</p>`;
+  $('#vdCard').hidden=false; scrollIfNarrow($('#vdCard'));
+};
+
+/* 课程 */
+rows($('#crBody'), ['课程','对象','课后产出','时长'], [
+ ['1. AI 能帮高定做什么（场景地图）','全员','本岗位 3 个可以马上用 AI 的环节','1 小时'],
+ ['2. 用 AI 接待和回复客户','顾问','个人常用回复模板 10 条（过知识库校对）','1.5 小时'],
+ ['3. 用 AI 做款式提案和效果图','顾问、版师','1 份完整款式提案 + 3 张效果图','2 小时'],
+ ['4. 用 AI 写短视频脚本和文案','内容同事','3 条可拍的 30 秒脚本','1.5 小时'],
+ ['5. 让品牌出现在 AI 搜索里（GEO）','内容、市场','本品牌 10 个检测问题 + 1 篇问答型内容','2 小时'],
+ ['6. 知识库怎么维护','店长、各类知识维护人','自己负责的知识类别更新清单','1 小时'],
+]);
+
+/* 运维 */
+$('#archList').innerHTML=['品牌知识库：价格工期、面料、工艺、流程等文档切片后存入向量库','大模型 API：按问题检索知识片段，再生成回答；找不到依据就转人工','入口：企业微信 / 小程序客服、直播间弹幕、短视频评论区','线索：对话中抽取字段、打分，写入线索表并提醒顾问','监控：记录每次问答的命中情况、转人工原因和调用成本'].map((s,i)=>`<li><span class="n">${i+1}</span><span>${esc(s)}</span></li>`).join('');
+rows($('#opsBody'), ['指标','本周','目标'], [
+ ['知识库命中率','91%','≥ 90%'],['回答准确率（抽检 50 条）','94%','≥ 95%'],['转人工率','12%','≤ 15%'],['A 级线索 30 分钟内跟进率','78%','≥ 90%'],['日均调用成本','¥23','≤ ¥50'],
+]);
+$('#iterList').innerHTML=[['第 1 周','上线接待助手，先只开放价格工期与面料两类知识'],['第 2 周','抽检发现“加急工期”回答不准：补充加急规则，增加“工期类问题必须引用工期表”约束'],['第 3 周','直播弹幕接入；新增广告过滤'],['第 4 周','A 级线索跟进率偏低：改成企微 + 短信双提醒，超时升级店长']].map(([w,s],i)=>`<li><span class="n">${i+1}</span><span><b>${w}：</b>${esc(s)}</span></li>`).join('');
+</script>
+</body>
+</html>
